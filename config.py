@@ -11,6 +11,7 @@ BASE_DIR = path.abspath(path.dirname(__file))
 DOTENV_PATH = path.join(BASE_DIR, ".env")
 load_dotenv(DOTENV_PATH)
 
+
 class Config:
     """Set flask configuration from .env file"""
 
@@ -22,3 +23,4 @@ class Config:
 
     # Mongo database config
     MONGO_URI = environ.get("MONGO_URI")
+    DB_NAME = environ.get("DB_NAME")
