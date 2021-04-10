@@ -26,14 +26,14 @@ def validate_user(user: dict) -> list:
         list: Lista de campos faltantes obligatorios en el usuario
     """
     missing_fields = []
-    if not user["name"] or not user["nombre"]:
+    if not "name" in user:
         missing_fields.append("name")
-    elif not user["last_name"] or not user["apellidos"]:
+    elif not "last_name" in user:
         missing_fields.append("last_name")
-    elif not user["password"] or not user["contrasena"]:
-        missing_fields.append("password")
-    elif not user["email"] or not user["mail"] or not user["correo_electronico"]:
+    elif not "email" in user:
         missing_fields.append("email")
+    elif not "password" in user:
+        missing_fields.append("password")
 
     return missing_fields
 

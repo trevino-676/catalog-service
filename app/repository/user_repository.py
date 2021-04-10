@@ -28,6 +28,7 @@ class UserMongoRepository(Repository):
             new_user.save()
             return True
         except Exception as e:
+            print(e)
             return False
 
     def get_user(self, filters: dict) -> User:

@@ -10,7 +10,7 @@ from flask_pymongo import PyMongo
 app = Flask(__name__)
 app.config.from_object("config.Config")
 
-mongo = PyMongo(app)
+mongo = PyMongo(app, authSource="admin")
 
 from app.routes import user_routes
 

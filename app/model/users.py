@@ -8,7 +8,8 @@ from app.model import DTO
 
 class User(DTO):
     
-    collection = mongo.db[app.config["DB_NAME"]]
+    collection_name = app.config["DB_NAME"]
+    collection = mongo.db[collection_name]
 
     @classmethod
     def get_all_users(cls, filters: dict) -> list:

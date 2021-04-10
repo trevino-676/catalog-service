@@ -37,7 +37,7 @@ def save_user():
     if len(missing_fields) > 0:
         response = {
             "status": False, 
-            "message": f"Faltan los siguientes campos: {f"{field}" for field in missing_fields}"
+            "message": f"Faltan los siguientes campos: " + [field for field in missing_fields]
         }
         return make_response(jsonify(response), 404)
     
@@ -50,7 +50,7 @@ def save_user():
     
     response = {
         "status": True,
-        "id": user_service.get_user({"$and": [{"name": user["name"]}, {"email": user["email"]}]})._id
+        "id": str(user_service.get_user({"$and": [{"name": user["name"]}, {"email": user["email"]}]})._id)
     }
     return make_response(jsonify(response), 200)
 
