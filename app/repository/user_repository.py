@@ -45,7 +45,7 @@ class UserMongoRepository(Repository):
         try:
             user = User()
             user.find(filters)
-            if user._id == "":
+            if str(user._id) == "":
                 return None
             return user
         except Exception as e:
