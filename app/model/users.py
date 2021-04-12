@@ -37,10 +37,11 @@ class User(DTO):
             list: Todos los usuarios que se encontraron
         """
         try:
-            users = cls.collection.find(filters)
-            if len(users) > 0:
-                return users
-            return None
+            mongo_users = cls.collection.find(filters)
+            users = []
+            for user in mongo_users:
+                users.append(user)
+            return users
         except Exception as e:
             print(e)
             return None
