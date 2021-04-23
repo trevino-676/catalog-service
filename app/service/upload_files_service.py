@@ -23,8 +23,8 @@ class UploadFilesService:
         """
         rfc = kwargs["rfc"] if "rfc" in kwargs else None
         if rfc is not None:
-            return self.repo.upload_file(file, bucket, object_name, rfc=rfc)
-        return self.repo.upload_file(file, bucket, object_name)
+            return self.repo.upload_file(file, bucket, rfc=rfc)
+        return self.repo.upload_file(file, bucket)
 
     def get_url(self, object_name, bucket, expiration=3600):
         """obtiene una url del archivo que se esta consultando

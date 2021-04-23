@@ -5,8 +5,9 @@ description: Este archivo contiene las rutas de los microservicios
 from flask import Blueprint, make_response, jsonify, request
 from bson.json_util import dumps
 
-from app.service import user_service
+from app.service import user_service, upload_service
 from app.utils import validate_user, FilterType, make_filters
+from app import app
 
 user_routes = Blueprint('user', __name__, url_prefix="/v1/user")
 
@@ -36,24 +37,24 @@ def save_user():
     missing_fields = validate_user(user)
     if len(missing_fields) > 0:
         response = {
-            "status": False, 
-            "message": f"Faltan los siguientes campos: {str(map(lambda field : field, missing_fields))}"
+            "status": False,
+            "message": f"Faltan los siguientes campos: "
+                       f"{str(map(lambda field: field, missing_fields))}"
         }
         return make_response(jsonify(response), 404)
-    
+
     if not user_service.add_user(user):
         response = {
             "status": False,
             "message": "No se pudo guardar el usuario en la base de datos"
         }
         return make_response(jsonify(response), 500)
-    
+
     response = {
         "status": True,
         "id": "Se guardo correctamente el usuario"
     }
     return make_response(jsonify(response), 200)
-
 
 
 @user_routes.route("/", methods=["GET"])
@@ -84,7 +85,7 @@ def update_user():
     user = request.json
     if not user_service.update_user(user):
         response = {
-            "status": False, 
+            "status": False,
             "message": f"No se pudo actualizar el usuario: {str(user._id)}"
         }
         return make_response(jsonify(response), 404)
@@ -103,7 +104,7 @@ def delete_user():
     user_id = request.json["_id"]
     if user_service.delete_user(user_id) != user_id:
         response = {
-            "status": False, 
+            "status": False,
             "message": f"No se pudo eliminar el usuario: {str(user_id)}"
         }
         return make_response(jsonify(response), 404)
@@ -113,3 +114,38 @@ def delete_user():
     }
     return make_response(jsonify(response), 200)
 
+
+@user_routes.route("/<rfc>/upload", methods=["POST"])
+def upload_file(rfc):
+    file = request.files["file"]
+
+    if upload_service.upload_file(file, app.config["BUCKET"], rfc=rfc):
+        resp = make_response(dumps({"status": True}), 200)
+    else:
+        resp = make_response(dumps({"status": False}), 500)
+
+    resp.headers["Content-Type"] = "application/json"
+    return resp
+
+
+@user_routes.route("/files/url", methods=["GET"])
+def get_url_file():
+    if "rfc" in request.json and "filename" in request.json:
+        obj_name = f"{request.json['rfc']}/{request.json['filename']}"
+    elif "file_route" in request.json:
+        obj_name = request.json["file_route"]
+    else:
+        resp = make_response(
+            dumps({"status": False, "message": "Los parametros enviados no son validos"}),
+            404)
+        resp.headers["Content-Type"] = "application/json"
+        return resp
+    
+    url = upload_service.get_url(obj_name, app.config["BUCKET"])
+    if url:
+        resp = make_response(dumps({"status": True, "url": url}), 200)
+    else:
+        resp = make_response(dumps({"status": False, "url": ""}), 404)
+
+    resp.headers["Content-Type"] = "application/json"
+    return resp

@@ -5,11 +5,12 @@ date: 21/04/2021
 import boto3
 from botocore.exceptions import ClientError
 
+
 class AWSRepository:
     def __init__(self):
         self.s3_client = boto3.client("s3")
 
-    def upload_file(self, file, bucket, object_name=None, **kwargs):
+    def upload_file(self, file, bucket, **kwargs):
         """Guarda un archivo en el bucket del servicio de AWS S3
 
         :param file: El archivo que se va a guardar.
@@ -19,15 +20,15 @@ class AWSRepository:
         :return: True si el archivo se guardo correctamente, False
             si se encotro algun error o no se guardo de forma correcta
         """
-        if object_name is None:
-            object_name = file
-
         if "rfc" in kwargs:
             rfc = kwargs["rfc"]
 
-        object_name = f"{rfc}/{object_name}"
+        object_name = f"{rfc}/{file.filename}"
         try:
-            response = self.s3_client.upload_file(file, bucket, object_name)
+            response = self.s3_client.upload_fileobj(file, bucket, object_name,
+                                                     ExtraArgs={"ACL": "public-read",
+                                                                "ContentType":
+                                                                    file.content_type})
         except ClientError as e:
             print(e)
             return False

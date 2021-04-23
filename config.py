@@ -28,3 +28,4 @@ class Config:
     #AWS variables
     AWS_KEY = environ.get("AWS_KEY")
     AWS_SECRET_KEY = environ.get("AWS_SECRET_KEY")
+    BUCKET = "drumbot-robinhood"
