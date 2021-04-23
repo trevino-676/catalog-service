@@ -24,3 +24,15 @@ class UserService(Service):
 
     def delete_user(self, id: str) -> str:
         return self.repository.delete_user(id)
+
+    def update_files_user(self, rfc: str, document_type: str, filename: str):
+        """Actualiza el usuario con las rutas de los archivos que se
+        guardaron en el storage
+
+        :param rfc: rfc del usuario.
+        :param document_type: Tipo de documento.
+        :param filename: Nombre del archivo dentro del storage
+        """
+        user = self.repository.get_user({"rfc": rfc})
+        user[document_type] = f"{rfc}/{filename}"
+        user.save()

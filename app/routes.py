@@ -118,9 +118,11 @@ def delete_user():
 @user_routes.route("/<rfc>/upload", methods=["POST"])
 def upload_file(rfc):
     file = request.files["file"]
+    file_type = "key" if file.filename.lower().endswith('.key') else "cer"
 
     if upload_service.upload_file(file, app.config["BUCKET"], rfc=rfc):
         resp = make_response(dumps({"status": True}), 200)
+        user_service.update_files_user(rfc, file_type, file.filename)
     else:
         resp = make_response(dumps({"status": False}), 500)
 
@@ -140,7 +142,7 @@ def get_url_file():
             404)
         resp.headers["Content-Type"] = "application/json"
         return resp
-    
+
     url = upload_service.get_url(obj_name, app.config["BUCKET"])
     if url:
         resp = make_response(dumps({"status": True, "url": url}), 200)
