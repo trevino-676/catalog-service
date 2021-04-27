@@ -4,8 +4,14 @@ stages:
 
 python-test:
   image: python:3.9-alpine
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - .cache/pip
   stage: test
   before_script:
     - apk add --no-cache g++ make
     - pip install --no-cache-dir -r requirements.txt
-    - pip install pytest
+  script:
+    - python -m unittest discover -s test/ -p '*_test-py'

@@ -61,3 +61,7 @@ class UserServiceTest(unittest.TestCase):
                                data=json.dumps(payload))
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
+
+
+if __name__ == "__main__":
+    unittest.main()

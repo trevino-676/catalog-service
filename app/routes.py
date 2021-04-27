@@ -59,7 +59,7 @@ def save_user():
         }
         resp = make_response(jsonify(response), 200)
 
-    resp["Content-Type"] = "application/json"
+    resp.headers["Content-Type"] = "application/json"
     return resp
 
 
