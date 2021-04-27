@@ -1,4 +1,11 @@
-build-job:
-  stage: build
-  script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
+stages:
+  - test
+  - build
+
+python-test:
+  image: python:3.9-alpine
+  stage: test
+  before_script:
+    - apk add --no-cache g++ make
+    - pip install --no-cache-dir -r requirements.txt
+    - pip install pytest

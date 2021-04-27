@@ -74,9 +74,13 @@ class UserMongoRepository(Repository):
         Returns:
             bool: bandera que indica si se guardo correctamente o no.
         """
-        if not self.save_user(user):
+        try:
+            new_user = User(user)
+            new_user.save()
+            return True
+        except Exception as e:
+            print(e)
             return False
-        return True
 
     def delete_user(self, id: str) -> str:
         """delete_user
@@ -90,7 +94,7 @@ class UserMongoRepository(Repository):
         """
         try:
             user = User()
-            user.find({"_id": ObjectId(id) })
+            user.find({"_id": ObjectId(id)})
             if not user._id:
                 return ""
             user.remove()

@@ -5,6 +5,8 @@ description: Este archivo contiene distintos metodos de uso general
 """
 from enum import Enum
 
+from bson import ObjectId
+
 
 class FilterType(Enum):
     """FilterType
@@ -58,3 +60,14 @@ def make_filters(type: FilterType, filters: dict) -> dict:
         raise Exception("The type isn't valid option")
 
     return new_filters
+
+
+def validate_id(_id) -> str:
+    """regresa el id del documento de mongo"""
+    if type(_id) == dict:
+        if "$oid" in _id:
+            return ObjectId(_id["$oid"])
+        else:
+            return None
+    else:
+        return ObjectId(_id)
