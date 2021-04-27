@@ -15,4 +15,4 @@ python-test:
     - pip install --no-cache-dir -r requirements.txt
   script:
     - ls
-    - python -m unittest discover -s test -p '*_test-py'
+    - python -m unittest discover -s test -p '*_test.py'
