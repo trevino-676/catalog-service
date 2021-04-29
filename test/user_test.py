@@ -2,6 +2,7 @@ import unittest
 import json
 
 from app import app
+from app.service import user_service
 
 
 class UserServiceTest(unittest.TestCase):
@@ -61,6 +62,23 @@ class UserServiceTest(unittest.TestCase):
                                data=json.dumps(payload))
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
+
+    def test_update_file_route(self):
+        payload = {
+            "rfc": "TEUS000101X00",
+            "filename_cer": "test.cer",
+            "filename_key": "test.key"
+        }
+        user_service.update_files_user(payload["rfc"], "cer", payload["filename_cer"])
+        user_service.update_files_user(payload["rfc"], "key", payload["filename_key"])
+
+        resp = self.app.get("/v1/user/", headers=self.headers,
+                            data=json.dumps({"rfc": payload["rfc"]}))
+
+        self.assertEqual(f"{payload['rfc']}/{payload['filename_cer']}",
+                         resp.json["user"]["cer"])
+        self.assertEqual(f"{payload['rfc']}/{payload['filename_key']}",
+                         resp.json["user"]["key"])
 
 
 if __name__ == "__main__":
