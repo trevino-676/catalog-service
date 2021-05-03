@@ -8,8 +8,55 @@ from bson.json_util import dumps
 from app.service import user_service
 from app.utils import validate_user, FilterType, make_filters
 
+##########################
+from functools import wraps
+import time 
+import jwt #PyJWT==1.7.1 
+import datetime  
+##########################
+
 user_routes = Blueprint('user', __name__, url_prefix="/v1/user")
 
+###########################jlb
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.args.get('token') #http://127.0.0.1:5000/route?token=alshfjfjdklsfj89549834ur
+
+        if not token: 
+            return jsonify({'message' : 'falta token!'}), 403
+
+        try: 
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithm = 'HS256')
+        except:
+            return jsonify({'message' : 'Token inválido!'}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated 
+"""
+@app.route('/unprotected')
+def unprotected():
+    return jsonify({'message' : 'abierto'})
+
+@app.route('/protected')
+@token_required
+def protected():
+    return jsonify({'message' : 'protegido'})""" 
+###########################jlg
+
+############################jlb 
+@user_routes.route('/login')
+def login():
+    auth = request.authorization
+    tm = int(time.time())
+    if auth and auth.password == 'secret':
+        token = jwt.encode({'user' : 'try', 'nombre' : 'name', 'time' : tm }, app.config['SECRET_KEY'], 
+                algorithm = 'HS256')
+        return jsonify({'token' : token.decode('UTF-8')})
+
+    return make_response('No se puede verificar!', 401, {'WWW-Authenticate' : 'Basic realm="Login Required"'})
+############################jlb 
 
 @user_routes.route("/all", methods=["GET"])
 def get_users():
