@@ -36,3 +36,13 @@ class UserService(Service):
         user = self.repository.get_user({"rfc": rfc})
         user[document_type] = f"{rfc}/{filename}"
         user.save()
+
+    def set_fiel_password(self, filters, fiel_password):
+        try:
+            user = self.repository.get_user(filters)
+            user["fiel"] = fiel_password
+            user.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False

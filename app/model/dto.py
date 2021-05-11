@@ -15,15 +15,15 @@ class DTO(dict):
         if not self._id:
             self.collection.insert_one(self)
         else:
-            self.collection.replace_one({"_id": ObjectId(self._id)}, self)
+            self.collection.replace_one({"_id": self._id}, self)
 
     def reload(self):
         if self._id:
-            self.update(self.collection.find_one({"_id": ObjectId(self.__id)}))
+            self.update(self.collection.find_one({"_id": self._id}))
 
     def remove(self):
         if self._id:
-            self.collection.delete_one({"_id": ObjectId(self._id)})
+            self.collection.delete_one({"_id": self._id})
             self.clear()
 
     def find(self, filters: dict):

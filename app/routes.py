@@ -9,7 +9,7 @@ from app.service import user_service, upload_service
 from app.utils import validate_user, FilterType, make_filters, validate_id
 from app import app
 
-user_routes = Blueprint('user', __name__, url_prefix="/v1/user")
+user_routes = Blueprint("user", __name__, url_prefix="/v1/user")
 
 
 @user_routes.route("/all", methods=["GET"])
@@ -40,7 +40,7 @@ def save_user():
         response = {
             "status": False,
             "message": f"Faltan los siguientes campos: "
-                       f"{str(map(lambda field: field, missing_fields))}"
+            f"{str(map(lambda field: field, missing_fields))}",
         }
         resp = make_response(jsonify(response), 404)
         resp.headers["Content-Type"] = "application/json"
@@ -49,14 +49,11 @@ def save_user():
     if not user_service.add_user(user):
         response = {
             "status": False,
-            "message": "No se pudo guardar el usuario en la base de datos"
+            "message": "No se pudo guardar el usuario en la base de datos",
         }
         resp = make_response(jsonify(response), 500)
     else:
-        response = {
-            "status": True,
-            "id": "Se guardo correctamente el usuario"
-        }
+        response = {"status": True, "id": "Se guardo correctamente el usuario"}
         resp = make_response(jsonify(response), 200)
 
     resp.headers["Content-Type"] = "application/json"
@@ -73,13 +70,10 @@ def get_user():
     if not user:
         response = {
             "status": False,
-            "message": "No se encontro al usuario que intentas buscar"
+            "message": "No se encontro al usuario que intentas buscar",
         }
         return make_response(jsonify(response), 404)
-    response = {
-        "status": True,
-        "user": user
-    }
+    response = {"status": True, "user": user}
     resp = make_response(dumps(response), 200)
     resp.headers["Content-Type"] = "application/json"
     return resp
@@ -95,13 +89,13 @@ def update_user():
     if not user_service.update_user(user):
         response = {
             "status": False,
-            "message": f"No se pudo actualizar el usuario: {str(user['_id'])}"
+            "message": f"No se pudo actualizar el usuario: {str(user['_id'])}",
         }
         resp = make_response(dumps(response), 404)
     else:
         response = {
             "status": True,
-            "message": f"Se actualizo corretamente el usuario: {str(user['_id'])}"
+            "message": f"Se actualizo corretamente el usuario: {str(user['_id'])}",
         }
         resp = make_response(dumps(response), 200)
     resp.headers["Content-Type"] = "application/json"
@@ -113,17 +107,17 @@ def delete_user():
     """delete_user
     Elimina un usuario en la base de datos
     """
-    user_id = str(validate_id(request.json["_id"]))
+    user_id = validate_id(request.json["_id"])
     if user_service.delete_user(user_id) != user_id:
         response = {
             "status": False,
-            "message": f"No se pudo eliminar el usuario: {str(user_id)}"
+            "message": f"No se pudo eliminar el usuario: {str(user_id)}",
         }
         resp = make_response(jsonify(response), 404)
     else:
         response = {
             "status": True,
-            "message": f"Se elimino corretamente el usuario: {str(user_id)}"
+            "message": f"Se elimino corretamente el usuario: {str(user_id)}",
         }
         resp = make_response(jsonify(response), 200)
     resp.headers["Content-Type"] = "application/json"
@@ -133,7 +127,7 @@ def delete_user():
 @user_routes.route("/<rfc>/upload", methods=["POST"])
 def upload_file(rfc):
     file = request.files["file"]
-    file_type = "key" if file.filename.lower().endswith('.key') else "cer"
+    file_type = "key" if file.filename.lower().endswith(".key") else "cer"
 
     if upload_service.upload_file(file, app.config["BUCKET"], rfc=rfc):
         resp = make_response(dumps({"status": True}), 200)
@@ -153,8 +147,11 @@ def get_url_file():
         obj_name = request.json["file_route"]
     else:
         resp = make_response(
-            dumps({"status": False, "message": "Los parametros enviados no son validos"}),
-            404)
+            dumps(
+                {"status": False, "message": "Los parametros enviados no son validos"}
+            ),
+            404,
+        )
         resp.headers["Content-Type"] = "application/json"
         return resp
 
@@ -164,5 +161,35 @@ def get_url_file():
     else:
         resp = make_response(dumps({"status": False, "url": ""}), 404)
 
+    resp.headers["Content-Type"] = "application/json"
+    return resp
+
+
+@user_routes.route("/fiel", methods=["POST"])
+def set_fiel_password():
+    params = request.json
+
+    if "_id" not in params and "rfc" not in params:
+        resp = make_response(
+            dumps(
+                {
+                    "status": False,
+                    "message": "No se encuentra el _id o rfc de usuario en parametros",
+                }
+            ),
+            404,
+        )
+
+    filter = {"rfc": params["rfc"]}
+    if user_service.set_fiel_password(filter, params["fiel"]):
+        resp = make_response(
+            dumps({"status": True, "message": "Contrasena guardada"}), 200
+        )
+    else:
+        resp = make_response(
+            dumps({"status": False, "message": "Problemas al guardar la contrasena"}),
+            500,
+        )
+    
     resp.headers["Content-Type"] = "application/json"
     return resp
