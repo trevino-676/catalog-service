@@ -3,6 +3,7 @@ author: Luis Manuel Torres Trevino
 description: Este archivo contiene las rutas de los microservicios
 """
 from flask import Blueprint, make_response, jsonify, request
+from flask_cors import cross_origin
 from bson.json_util import dumps
 
 from app.service import user_service, upload_service
@@ -13,6 +14,7 @@ user_routes = Blueprint("user", __name__, url_prefix="/v1/user")
 
 
 @user_routes.route("/all", methods=["GET"])
+@cross_origin()
 def get_users():
     """get_users
     Responde con una lista todos los usuarios que estan registrados en
@@ -30,6 +32,7 @@ def get_users():
 
 
 @user_routes.route("/", methods=["POST"])
+@cross_origin()
 def save_user():
     """save_user
     Guarda el usuario que reciba en el request
@@ -61,6 +64,7 @@ def save_user():
 
 
 @user_routes.route("/", methods=["GET"])
+@cross_origin()
 def get_user():
     """get_user
     Obtiene un solo un usuario de la base de datos
@@ -80,6 +84,7 @@ def get_user():
 
 
 @user_routes.route("/", methods=["PUT"])
+@cross_origin()
 def update_user():
     """update_user(
     Actualiza un usuario en la base de datos
@@ -103,6 +108,7 @@ def update_user():
 
 
 @user_routes.route("/", methods=["DELETE"])
+@cross_origin()
 def delete_user():
     """delete_user
     Elimina un usuario en la base de datos
@@ -125,6 +131,7 @@ def delete_user():
 
 
 @user_routes.route("/<rfc>/upload", methods=["POST"])
+@cross_origin()
 def upload_file(rfc):
     file = request.files["file"]
     file_type = "key" if file.filename.lower().endswith(".key") else "cer"
@@ -166,6 +173,7 @@ def get_url_file():
 
 
 @user_routes.route("/fiel", methods=["POST"])
+@cross_origin()
 def set_fiel_password():
     params = request.json
 
@@ -193,3 +201,9 @@ def set_fiel_password():
     
     resp.headers["Content-Type"] = "application/json"
     return resp
+
+
+@user_routes.after_request
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
