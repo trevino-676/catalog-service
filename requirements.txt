@@ -7,6 +7,7 @@ certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
 Flask==1.1.2
+Flask-Cors==3.0.10
 Flask-PyMongo==2.3.0
 idna==2.10
 iniconfig==1.1.1
@@ -26,6 +27,7 @@ pyparsing==2.4.7
 pytest==6.2.3
 python-dateutil==2.8.1
 python-dotenv==0.17.0
+python-json-logger==2.0.1
 regex==2021.4.4
 requests==2.25.1
 s3transfer==0.4.0
