@@ -25,3 +25,26 @@ class Service(ABC):
     @abstractmethod
     def delete_user(self, id: str) -> str:
         pass
+
+
+class CService(ABC):
+    @abstractmethod
+    def add(self, document: dict) -> bool:
+        pass
+
+    @abstractmethod
+    def get_one(self, filters: dict) -> dict:
+        pass
+
+    @abstractmethod
+    def get_all(self, filters: dict) -> list:
+        pass
+
+    @abstractmethod
+    def update(self, document: dict) -> bool:
+        pass
+
+    @abstractmethod
+    def delete(self, id: str) -> str:
+        pass
+    
