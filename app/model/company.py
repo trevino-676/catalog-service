@@ -12,7 +12,7 @@ class Company(DTO):
     """
 
     collection_name = app.config["COMPANY_COLLECTION"]
-    collection = mongo[collection_name]
+    collection = mongo.db[collection_name]
 
     def __get_all_companies(cls, filters: dict) -> list:
         """
