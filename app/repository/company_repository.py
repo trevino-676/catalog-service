@@ -103,7 +103,7 @@ class CompanyMongoRepository(CompanyRepository):
         try:
             company = Company()
             company.find({"_id": ObjectId(id)})
-            if company._id != id:
+            if str(company._id) != id:
                 raise Exception("No se encontro la compania")
 
             company.remove()

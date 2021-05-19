@@ -30,12 +30,14 @@ def create_company():
             ),
             500,
         )
+        return resp
 
     company = request.json["company"]
     if not company_service.add(company):
         resp = make_response(
             dumps({"status": False, "message": "Error al guardar la compania"}), 500
         )
+        return resp
     resp = make_response(
         {"status": True, "message": "Compania creada correctamente"}, 200
     )
@@ -59,6 +61,7 @@ def get_company():
             ),
             500,
         )
+        return resp
 
     filter_type = request.json["type"]
     filters = make_filters(
@@ -70,6 +73,7 @@ def get_company():
         resp = make_response(
             dumps({"status": False, "message": "No se encontro compania"}), 404
         )
+        return resp
 
     resp = make_response(dumps({"status": True, "company": company}), 200)
     return resp
@@ -91,6 +95,7 @@ def get_companies():
             ),
             500,
         )
+        return resp
 
     filter_type = request.json["type"]
     filters = make_filters(
@@ -102,8 +107,9 @@ def get_companies():
         resp = make_response(
             dumps({"status": False, "message": "No se encontro companias"}), 404
         )
+        return resp
 
-    resp = make_response(dumps({"status": True, "companies": list(companies)}), 200)
+    resp = make_response(dumps({"status": True, "companies": companies}), 200)
     return resp
 
 
@@ -123,6 +129,7 @@ def update_company():
             ),
             500,
         )
+        return resp
     if not company_service.update(request.json["company"]):
         resp = make_response(
             dumps(
@@ -133,6 +140,7 @@ def update_company():
             ),
             500,
         )
+        return resp
     resp = make_response(
         {"status": True, "message": "Compania actualizada correctamente"}, 200
     )
@@ -157,7 +165,7 @@ def delete_company(id):
             ),
             500,
         )
-    
+        return resp
     resp = make_response(
         {"status": True, "message": "Compania actualizada correctamente"}, 200
     )
