@@ -85,23 +85,15 @@ def get_companies():
     """
     Buscay devuelve una lista de companias
     """
-    if "type" not in request.json or "filters" not in request.json:
-        resp = make_response(
-            dumps(
-                {
-                    "status": False,
-                    "message": "La estructura de la peticion es incorrecta",
-                }
-            ),
-            500,
+    parameters = request.json
+    if "type" not in parameters or "filters" not in parameters:
+        filters = {} 
+    else:
+        filter_type = request.json["type"]
+        filters = make_filters(
+            FilterType.AND if filter_type == "and" else FilterType.OR,
+            request.json["filters"],
         )
-        return resp
-
-    filter_type = request.json["type"]
-    filters = make_filters(
-        FilterType.AND if filter_type == "and" else FilterType.OR,
-        request.json["filters"],
-    )
     companies = company_service.get_all(filters)
     if not companies:
         resp = make_response(
