@@ -86,14 +86,18 @@ def get_companies():
     Buscay devuelve una lista de companias
     """
     parameters = request.json
-    if "type" not in parameters or "filters" not in parameters:
-        filters = {} 
+    app.logger.info(parameters)
+    if parameters is None:
+        filters = {}
     else:
-        filter_type = request.json["type"]
-        filters = make_filters(
-            FilterType.AND if filter_type == "and" else FilterType.OR,
-            request.json["filters"],
-        )
+        if "type" not in parameters or "filters" not in parameters:
+            filters = {}
+        else:
+            filter_type = request.json["type"]
+            filters = make_filters(
+                FilterType.AND if filter_type == "and" else FilterType.OR,
+                request.json["filters"],
+            )
     companies = company_service.get_all(filters)
     if not companies:
         resp = make_response(
@@ -169,4 +173,5 @@ def delete_company(id):
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Content-Type"] = "application/json"
+    app.logger.info(response.headers)
     return response
