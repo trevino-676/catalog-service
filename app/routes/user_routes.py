@@ -203,7 +203,10 @@ def set_fiel_password():
     return resp
 
 
+# TODO: Falta metodo de login
+
 @user_routes.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Content-Type"] = "application/json"
     return response
