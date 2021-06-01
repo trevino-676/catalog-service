@@ -91,6 +91,15 @@ class UserServiceTest(unittest.TestCase):
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
 
+    def test_login(self):
+        payload = {
+            "email": "user_test@test.com",
+            "password": "test123"
+        }
+        resp = self.app.post("/v1/user/login", headers=self.headers, data=json.dumps(payload))
+
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(True, resp.json["status"])
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,7 @@ description: Este archivo contiene la clase que implementa al servicio
 """
 from app.repository import Repository
 from app.service.service import Service
+from app.utils import check_password
 
 
 class UserService(Service):
@@ -46,3 +47,12 @@ class UserService(Service):
         except Exception as e:
             print(e)
             return False
+
+    def login(self, email, password) -> dict:
+        """Loggea al usuario en el sistema"""
+        filter = {"email": email}
+        user = self.get_user(filter)
+        if not user:
+            return None
+
+        return check_password(password, user["password"])

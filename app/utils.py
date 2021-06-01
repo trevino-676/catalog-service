@@ -4,6 +4,7 @@ description: Este archivo contiene distintos metodos de uso general
     para el microservico de usuarios
 """
 from enum import Enum
+import bcrypt
 
 from bson import ObjectId
 
@@ -71,3 +72,26 @@ def validate_id(_id) -> str:
             return None
     else:
         return ObjectId(_id)
+
+
+def encrypt_password(password: str):
+    """
+    Encripata la contraseña.
+    
+    :param password (str): contraseña que se va a encriptar
+    :returns: Contraseña ya encriptada
+    """
+    salt = bcrypt.gensalt()
+    hash_passwd = bcrypt.hashpw(password.encode("utf-8"), salt)
+    return hash_passwd.decode("utf-8")
+
+
+def check_password(password, hash_passwd):
+    """
+    Compara la contraseña con la contraseña ya encriptada.
+
+    :param password (str): Contrasena sin encriptar.
+    :param hash_passwd (str): Contrasena encriptada.
+    :returns: True si coinciden, False si no.
+    """
+    return bcrypt.checkpw(password.encode("utf-8"), hash_passwd.encode("utf-8"))

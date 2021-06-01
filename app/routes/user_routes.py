@@ -7,7 +7,13 @@ from flask_cors import cross_origin
 from bson.json_util import dumps
 
 from app.service import user_service, upload_service
-from app.utils import validate_user, FilterType, make_filters, validate_id
+from app.utils import (
+    validate_user,
+    FilterType,
+    make_filters,
+    validate_id,
+    encrypt_password,
+)
 from app import app
 
 user_routes = Blueprint("user", __name__, url_prefix="/v1/user")
@@ -49,6 +55,7 @@ def save_user():
         resp.headers["Content-Type"] = "application/json"
         return resp
 
+    user["password"] = encrypt_password(user["password"])
     if not user_service.add_user(user):
         response = {
             "status": False,
@@ -198,12 +205,33 @@ def set_fiel_password():
             dumps({"status": False, "message": "Problemas al guardar la contrasena"}),
             500,
         )
-    
+
     resp.headers["Content-Type"] = "application/json"
     return resp
 
 
-# TODO: Falta metodo de login
+@user_routes.route("/login", methods=["POST"])
+@cross_origin()
+def login_user():
+    params = request.json
+    if "email" not in params or "password" not in params:
+        return make_response(
+            dumps(
+                {
+                    "status": False,
+                    "message": "Los datos de la peticion no son correctos",
+                },
+            ),
+            500
+        )
+    if not user_service.login(params["email"], params["password"]):
+        return make_response(
+            dumps({"status": False, "message": "Usuario o contrasena incorrectos"}),
+            404
+        )
+    return make_response(
+        dumps({"status": True, "data": {"token": ""}}), 200
+    )
 
 @user_routes.after_request
 def after_request(response):
