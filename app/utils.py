@@ -4,9 +4,16 @@ description: Este archivo contiene distintos metodos de uso general
     para el microservico de usuarios
 """
 from enum import Enum
-import bcrypt
+from passlib.context import CryptContext
 
 from bson import ObjectId
+
+
+__pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000
+)
 
 
 class FilterType(Enum):
@@ -81,9 +88,7 @@ def encrypt_password(password: str):
     :param password (str): contraseña que se va a encriptar
     :returns: Contraseña ya encriptada
     """
-    salt = bcrypt.gensalt()
-    hash_passwd = bcrypt.hashpw(password.encode("utf-8"), salt)
-    return hash_passwd.decode("utf-8")
+    return __pwd_context.encrypt(password)
 
 
 def check_password(password, hash_passwd):
@@ -94,4 +99,4 @@ def check_password(password, hash_passwd):
     :param hash_passwd (str): Contrasena encriptada.
     :returns: True si coinciden, False si no.
     """
-    return bcrypt.checkpw(password.encode("utf-8"), hash_passwd.encode("utf-8"))
+    return __pwd_context.verify(password, hash_passwd)
