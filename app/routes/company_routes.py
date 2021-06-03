@@ -94,10 +94,13 @@ def get_companies():
             filters = {}
         else:
             filter_type = request.json["type"]
-            filters = make_filters(
-                FilterType.AND if filter_type == "and" else FilterType.OR,
-                request.json["filters"],
-            )
+            if filter_type == "in":
+                filters = make_filters(FilterType.IN, request.json["filters"])
+            else:
+                filters = make_filters(
+                    FilterType.AND if filter_type == "and" else FilterType.OR,
+                    request.json["filters"],
+                )
     companies = company_service.get_all(filters)
     if not companies:
         resp = make_response(
@@ -173,5 +176,4 @@ def delete_company(id):
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Content-Type"] = "application/json"
-    app.logger.info(response.headers)
     return response

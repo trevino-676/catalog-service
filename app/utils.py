@@ -23,6 +23,7 @@ class FilterType(Enum):
 
     AND = 1
     OR = 2
+    IN = 3
 
 
 def validate_user(user: dict) -> list:
@@ -64,6 +65,8 @@ def make_filters(type: FilterType, filters: dict) -> dict:
         new_filters = {"$and": [{item: value} for item, value in filters.items()]}
     elif type == FilterType.OR:
         new_filters = {"$or": [{item: value} for item, value in filters.items()]}
+    elif type == FilterType.IN:
+        new_filters = {item: {"$in": value} for item, value in filters.items() }
     else:
         raise Exception("The type isn't valid option")
 
