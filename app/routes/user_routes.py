@@ -4,6 +4,7 @@ description: Este archivo contiene las rutas de los microservicios
 """
 from flask import Blueprint, make_response, jsonify, request
 from flask_cors import cross_origin
+from flask_jwt import jwt_required
 from bson.json_util import dumps
 
 from app.service import user_service, upload_service
@@ -20,6 +21,7 @@ user_routes = Blueprint("user", __name__, url_prefix="/v1/user")
 
 
 @user_routes.route("/all", methods=["GET"])
+@jwt_required()
 @cross_origin()
 def get_users():
     """get_users
@@ -71,6 +73,7 @@ def save_user():
 
 
 @user_routes.route("/", methods=["GET"])
+@jwt_required()
 @cross_origin()
 def get_user():
     """get_user
@@ -91,6 +94,7 @@ def get_user():
 
 
 @user_routes.route("/", methods=["PUT"])
+@jwt_required()
 @cross_origin()
 def update_user():
     """update_user(
@@ -115,6 +119,7 @@ def update_user():
 
 
 @user_routes.route("/", methods=["DELETE"])
+@jwt_required()
 @cross_origin()
 def delete_user():
     """delete_user
@@ -138,6 +143,7 @@ def delete_user():
 
 
 @user_routes.route("/<rfc>/upload", methods=["POST"])
+@jwt_required()
 @cross_origin()
 def upload_file(rfc):
     file = request.files["file"]
@@ -154,6 +160,8 @@ def upload_file(rfc):
 
 
 @user_routes.route("/files/url", methods=["GET"])
+@jwt_required()
+@cross_origin()
 def get_url_file():
     if "rfc" in request.json and "filename" in request.json:
         obj_name = f"{request.json['rfc']}/{request.json['filename']}"
@@ -180,6 +188,7 @@ def get_url_file():
 
 
 @user_routes.route("/fiel", methods=["POST"])
+@jwt_required()
 @cross_origin()
 def set_fiel_password():
     params = request.json
@@ -222,16 +231,14 @@ def login_user():
                     "message": "Los datos de la peticion no son correctos",
                 },
             ),
-            500
+            500,
         )
     if not user_service.login(params["email"], params["password"]):
         return make_response(
-            dumps({"status": False, "message": "Usuario o contrasena incorrectos"}),
-            404
+            dumps({"status": False, "message": "Usuario o contrasena incorrectos"}), 404
         )
-    return make_response(
-        dumps({"status": True, "data": {"token": ""}}), 200
-    )
+    return make_response(dumps({"status": True, "data": {"token": ""}}), 200)
+
 
 @user_routes.after_request
 def after_request(response):

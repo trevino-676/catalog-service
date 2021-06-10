@@ -5,6 +5,7 @@ date: 19/05/2021
 from flask import Blueprint, request, make_response
 from flask_cors import cross_origin
 from bson.json_util import dumps
+from flask_jwt import jwt_required
 
 from app import app
 from app.service import company_service
@@ -15,6 +16,7 @@ company_routes = Blueprint("company", __name__, url_prefix="/v1/company")
 
 
 @company_routes.route("/", methods=["POST"])
+@jwt_required()
 @cross_origin()
 def create_company():
     """
@@ -46,6 +48,7 @@ def create_company():
 
 
 @company_routes.route("/", methods=["GET"])
+@jwt_required()
 @cross_origin()
 def get_company():
     """
@@ -80,6 +83,7 @@ def get_company():
 
 
 @company_routes.route("/all", methods=["GET"])
+@jwt_required()
 @cross_origin()
 def get_companies():
     """
@@ -113,6 +117,7 @@ def get_companies():
 
 
 @company_routes.route("/", methods=["PUT"])
+@jwt_required()
 @cross_origin()
 def update_company():
     """
@@ -148,6 +153,7 @@ def update_company():
 
 
 @company_routes.route("/<id>", methods=["DELETE"])
+@jwt_required()
 @cross_origin()
 def delete_company(id):
     """
