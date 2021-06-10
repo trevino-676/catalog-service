@@ -12,6 +12,7 @@ class CompanyServiceTest(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.headers = {"Content-Type": "application/json"}
+        self.headers["Authorization"] = self.__auth()
         self.company = {
             "name": "company_test",
             "rfc": "TECO000101X00",
@@ -21,9 +22,18 @@ class CompanyServiceTest(unittest.TestCase):
         }
         self.filters = {"type": "and", "filters": {"rfc": self.company["rfc"]}}
 
+    def __auth(self):
+        payload = {"username": "user_test@test.com", "password": "test123"}
+        response = self.app.post(
+            "/auth", headers=self.headers, data=json.dumps(payload)
+        )
+        return f"JWT {response.json['access_token']}"
+
     def test_create_company(self):
         response = self.app.post(
-            "/v1/company/", headers=self.headers, data=json.dumps({"company": self.company})
+            "/v1/company/",
+            headers=self.headers,
+            data=json.dumps({"company": self.company}),
         )
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, response.json["status"])

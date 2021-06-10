@@ -10,6 +10,14 @@ class UserServiceTest(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
         self.headers = {"Content-Type": "application/json"}
+        self.auth = self.__auth()
+
+    def __auth(self):
+        payload = {"username": "user_test@test.com", "password": "test123"}
+        response = self.app.post(
+            "/auth", headers=self.headers, data=json.dumps(payload)
+        )
+        return f"JWT {response.json['access_token']}"
 
     def test_create_user(self):
         payload = {
@@ -28,6 +36,7 @@ class UserServiceTest(unittest.TestCase):
 
     def test_find_user(self):
         payload = {"name": "user", "rfc": "TEUS000101X00"}
+        self.headers["Authorization"] = self.auth
         response = self.app.get(
             "/v1/user/", headers=self.headers, data=json.dumps(payload)
         )
@@ -38,6 +47,7 @@ class UserServiceTest(unittest.TestCase):
 
     def test_update_user(self):
         payload = {"name": "user", "rfc": "TEUS000101X00"}
+        self.headers["Authorization"] = self.auth
         resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
         user = resp.json["user"]
         user["email"] = "test@test.com"
@@ -49,6 +59,7 @@ class UserServiceTest(unittest.TestCase):
         self.assertEqual(True, response.json["status"])
 
     def test_zdelete_user(self):
+        self.headers["Authorization"] = self.auth
         response = self.app.get(
             "/v1/user/", headers=self.headers, data=json.dumps({"rfc": "TEUS000101X00"})
         )
@@ -60,6 +71,7 @@ class UserServiceTest(unittest.TestCase):
         self.assertEqual(True, resp.json["status"])
 
     def test_update_file_route(self):
+        self.headers["Authorization"] = self.auth
         payload = {
             "rfc": "TEUS000101X00",
             "filename_cer": "test.cer",
@@ -80,6 +92,7 @@ class UserServiceTest(unittest.TestCase):
         )
 
     def test_set_fiel_password(self):
+        self.headers["Authorization"] = self.auth
         payload = {
             "rfc": "TEUS000101X00",
             "fiel": "hola",
@@ -92,14 +105,14 @@ class UserServiceTest(unittest.TestCase):
         self.assertEqual(True, resp.json["status"])
 
     def test_login(self):
-        payload = {
-            "email": "user_test@test.com",
-            "password": "test123"
-        }
-        resp = self.app.post("/v1/user/login", headers=self.headers, data=json.dumps(payload))
+        payload = {"email": "user_test@test.com", "password": "test123"}
+        resp = self.app.post(
+            "/v1/user/login", headers=self.headers, data=json.dumps(payload)
+        )
 
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
+
 
 if __name__ == "__main__":
     unittest.main()
