@@ -21,21 +21,35 @@ user_routes = Blueprint("user", __name__, url_prefix="/v1/user")
 
 
 @user_routes.route("/all", methods=["GET"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def get_users():
     """get_users
     Responde con una lista todos los usuarios que estan registrados en
     el sistema
     """
-    users = user_service.get_users(make_filters(FilterType.AND, request.json))
-    if not users:
-        response = {"status": False, "users": []}
-        resp = make_response(jsonify(response), 500)
+    request_filters = request.args.get("filters")
+    request_filter_type = request.args.get("type")
+    parameters = None
+    if request_filter_type and request_filters:
+        parameters = {"type": request_filter_type, "filters": request_filters}
+
+    if parameters is None:
+        filters = {}
     else:
-        response = {"status": True, "users": users}
-        resp = make_response(dumps(response), 200)
-    resp.headers["Content-Type"] = "application/json"
+        if parameters["type"] == "in":
+            filters = make_filters(FilterType.IN, parameters["filters"])
+        elif parameters["type"] == "and":
+            filters = make_filters(FilterType.AND, parameters["filters"])
+        else:
+            filters = make_filters(FilterType.OR, parameters["filters"])
+
+    users = user_service.get_users(filters)
+    if not users:
+        resp = make_response(
+            dumps({"status": False, "message": "No se encontraron usuarios"}), 404
+        )
+    resp = make_response(dumps({"status": False, "users": users}), 200)
     return resp
 
 
@@ -72,9 +86,10 @@ def save_user():
     return resp
 
 
+# TODO: Cambiar forma de obtener los parametros del request
 @user_routes.route("/", methods=["GET"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def get_user():
     """get_user
     Obtiene un solo un usuario de la base de datos
@@ -94,8 +109,8 @@ def get_user():
 
 
 @user_routes.route("/", methods=["PUT"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def update_user():
     """update_user(
     Actualiza un usuario en la base de datos
@@ -119,8 +134,8 @@ def update_user():
 
 
 @user_routes.route("/", methods=["DELETE"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def delete_user():
     """delete_user
     Elimina un usuario en la base de datos
@@ -143,8 +158,8 @@ def delete_user():
 
 
 @user_routes.route("/<rfc>/upload", methods=["POST"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def upload_file(rfc):
     file = request.files["file"]
     file_type = "key" if file.filename.lower().endswith(".key") else "cer"
@@ -160,8 +175,8 @@ def upload_file(rfc):
 
 
 @user_routes.route("/files/url", methods=["GET"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def get_url_file():
     if "rfc" in request.json and "filename" in request.json:
         obj_name = f"{request.json['rfc']}/{request.json['filename']}"
@@ -188,8 +203,8 @@ def get_url_file():
 
 
 @user_routes.route("/fiel", methods=["POST"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def set_fiel_password():
     params = request.json
 

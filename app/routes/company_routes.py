@@ -16,8 +16,8 @@ company_routes = Blueprint("company", __name__, url_prefix="/v1/company")
 
 
 @company_routes.route("/", methods=["POST"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def create_company():
     """
     Crea una nueva compania en la base de datos
@@ -48,8 +48,8 @@ def create_company():
 
 
 @company_routes.route("/", methods=["GET"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def get_company():
     """
     Busca y devuelve una compania
@@ -83,14 +83,17 @@ def get_company():
 
 
 @company_routes.route("/all", methods=["GET"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def get_companies():
     """
     Buscay devuelve una lista de companias
     """
-    parameters = request.json
-    app.logger.info(parameters)
+    filter_type = request.args.get("type")
+    request_filter = request.args.get("filters")
+    parameters = None
+    if filter_type and request_filter:
+        parameters = {"type": filter_type, "filters": request_filter}
     if parameters is None:
         filters = {}
     else:
@@ -105,6 +108,7 @@ def get_companies():
                     FilterType.AND if filter_type == "and" else FilterType.OR,
                     request.json["filters"],
                 )
+
     companies = company_service.get_all(filters)
     if not companies:
         resp = make_response(
@@ -117,8 +121,8 @@ def get_companies():
 
 
 @company_routes.route("/", methods=["PUT"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def update_company():
     """
     Actualiza una compania
@@ -153,8 +157,8 @@ def update_company():
 
 
 @company_routes.route("/<id>", methods=["DELETE"])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def delete_company(id):
     """
     Borra la compania que se pasa como parametro
