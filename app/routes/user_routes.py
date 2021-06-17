@@ -140,7 +140,7 @@ def delete_user():
     """delete_user
     Elimina un usuario en la base de datos
     """
-    user_id = validate_id(request.json["_id"])
+    user_id = validate_id(request.args.get("id"))
     if user_service.delete_user(user_id) != user_id:
         response = {
             "status": False,

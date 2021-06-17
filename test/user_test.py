@@ -63,10 +63,8 @@ class UserServiceTest(unittest.TestCase):
         response = self.app.get(
             "/v1/user/", headers=self.headers, data=json.dumps({"rfc": "TEUS000101X00"})
         )
-        payload = {"_id": response.json["user"]["_id"]}
-        resp = self.app.delete(
-            "/v1/user/", headers=self.headers, data=json.dumps(payload)
-        )
+        payload = {"id": response.json["user"]["_id"]["$oid"]}
+        resp = self.app.delete(f"/v1/user/?id={payload['id']}", headers=self.headers)
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
 
