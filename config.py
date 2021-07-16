@@ -26,7 +26,10 @@ class Config:
     DB_NAME = environ.get("DB_NAME")
     COMPANY_COLLECTION = environ.get("COMPANY_COLLECTION")
 
-    #AWS variables
+    # AWS variables
     AWS_KEY = environ.get("AWS_KEY")
     AWS_SECRET_KEY = environ.get("AWS_SECRET_KEY")
     BUCKET = "drumbot-robinhood"
+
+    # JWT environ variables
+    JWT_EXPIRATION_DELTA = environ.get("JWT_EXPIRATION_DELTA")
