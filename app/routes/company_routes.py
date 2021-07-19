@@ -5,11 +5,10 @@ date: 19/05/2021
 from flask import Blueprint, request, make_response
 from flask_cors import cross_origin
 from bson.json_util import dumps
-from flask_jwt import jwt_required
+from flask_jwt import jwt_required, current_identity
 
-from app import app
-from app.service import company_service
-from app.utils import validate_user, make_filters, validate_id, FilterType
+from app.service import company_service, user_service
+from app.utils import make_filters, FilterType, validate_id
 
 
 company_routes = Blueprint("company", __name__, url_prefix="/v1/company")
@@ -40,6 +39,15 @@ def create_company():
             dumps({"status": False, "message": "Error al guardar la compania"}), 500
         )
         return resp
+    if not user_service.add_companies_to_user(current_identity, company["rfc"]):
+        resp = make_response(
+            dumps(
+                {"status": False, "message": "Error al guardar la compania en el usuario"}
+            ),
+            500,
+        )
+        return resp
+
     resp = make_response(
         {"status": True, "message": "Compania creada correctamente"}, 200
     )
@@ -163,6 +171,7 @@ def delete_company(id):
     """
     Borra la compania que se pasa como parametro
     """
+    company = company_service.get_one({"_id": validate_id(id)})
     deleted_id = company_service.delete(id)
     if deleted_id != id:
         resp = make_response(
@@ -175,6 +184,12 @@ def delete_company(id):
             500,
         )
         return resp
+    try:
+        user_service.delete_companies_of_user(current_identity, company["rfc"])
+    except Exception as e:
+        resp = make_response(dumps({"status": False, "message": e}), 500)
+        return resp
+
     resp = make_response(
         {"status": True, "message": "Compania actualizada correctamente"}, 200
     )
