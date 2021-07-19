@@ -3,6 +3,7 @@ author: Luis Manuel Torres Trevino
 description: Este archivo contiene distintos metodos de uso general
     para el microservico de usuarios
 """
+import jwt
 from enum import Enum
 from passlib.context import CryptContext
 
@@ -10,9 +11,9 @@ from bson import ObjectId
 
 
 __pwd_context = CryptContext(
-        schemes=["pbkdf2_sha256"],
-        default="pbkdf2_sha256",
-        pbkdf2_sha256__default_rounds=30000
+    schemes=["pbkdf2_sha256"],
+    default="pbkdf2_sha256",
+    pbkdf2_sha256__default_rounds=30000,
 )
 
 
@@ -66,7 +67,7 @@ def make_filters(type: FilterType, filters: dict) -> dict:
     elif type == FilterType.OR:
         new_filters = {"$or": [{item: value} for item, value in filters.items()]}
     elif type == FilterType.IN:
-        new_filters = {item: {"$in": value} for item, value in filters.items() }
+        new_filters = {item: {"$in": value} for item, value in filters.items()}
     else:
         raise Exception("The type isn't valid option")
 
@@ -87,7 +88,7 @@ def validate_id(_id) -> str:
 def encrypt_password(password: str):
     """
     Encripata la contraseña.
-    
+
     :param password (str): contraseña que se va a encriptar
     :returns: Contraseña ya encriptada
     """
@@ -103,3 +104,10 @@ def check_password(password, hash_passwd):
     :returns: True si coinciden, False si no.
     """
     return __pwd_context.verify(password, hash_passwd)
+
+
+def decode_token(token, secret_key, encrypt_method="SHA256"):
+    """
+    Decodifica el token de autenticacion
+    """
+    return jwt.decode(token, secret_key, algorithms=encrypt_method)

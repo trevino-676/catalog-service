@@ -5,6 +5,7 @@ description: Este archivo contiene la clase que implementa al servicio
 from app.repository import Repository
 from app.service.service import Service
 from app.utils import check_password
+from app.model import User
 
 
 class UserService(Service):
@@ -56,3 +57,60 @@ class UserService(Service):
             return None
 
         return check_password(password, user["password"])
+
+    @classmethod
+    def add_companies_to_user(cls, user, company_rfc):
+        """Agrega una nueva compania al usuario
+
+        Params:
+            company_rfc (str): rfc de la compania nueva.
+
+        Returns:
+            True si se guardo correctamente.
+
+        Raise:
+            Exception: Si hubo un error al guardar la informacion.
+        """
+        if "companies" not in user:
+            user["companies"] = [company_rfc]
+        else:
+            rfc_exists = list(filter(lambda rfc: (rfc == company_rfc), user["companies"]))
+            if not rfc_exists:
+                user["companies"].append(company_rfc)
+
+        updated_user = User(user)
+        try:
+            updated_user.save()
+            return True
+        except Exception as e:
+            raise Exception(e)
+
+    @classmethod
+    def delete_companies_of_user(cls, user: dict, company_rfc: str) -> bool:
+        """Elimina la compania de la lista de companias del usuario
+
+        Params:
+            user (dict): Diccionario con los datos del usuario.
+            company_rfc (str): Rfc de la compania que se va eliminar.
+
+        Returns:
+            True si se elimino correctamente.
+        """
+        if "companies" not in user:
+            raise Exception("The list of companies doesn't exist in the user")
+
+        updated_user = User(user)
+        rfc_exists = list(
+            filter(lambda rfc: (rfc == company_rfc), updated_user.companies)
+        )
+
+        if not rfc_exists:
+            raise Exception("The company rfc doesn't exist in the companies list")
+
+        updated_user.companies.remove(company_rfc)
+
+        try:
+            updated_user.save()
+            return True
+        except Exception as e:
+            raise Exception(e)

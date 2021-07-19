@@ -1,9 +1,9 @@
 import unittest
 import json
-import base64
 
 from app import app
 from app.service import user_service
+from app.utils import validate_id
 
 
 class UserServiceTest(unittest.TestCase):
@@ -14,9 +14,7 @@ class UserServiceTest(unittest.TestCase):
 
     def __auth(self):
         payload = {"username": "user_test@test.com", "password": "test123"}
-        response = self.app.post(
-            "/auth", headers=self.headers, data=json.dumps(payload)
-        )
+        response = self.app.post("/auth", headers=self.headers, data=json.dumps(payload))
         return f"JWT {response.json['access_token']}"
 
     def test_create_user(self):
@@ -51,9 +49,7 @@ class UserServiceTest(unittest.TestCase):
         resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
         user = resp.json["user"]
         user["email"] = "test@test.com"
-        response = self.app.put(
-            "/v1/user/", headers=self.headers, data=json.dumps(user)
-        )
+        response = self.app.put("/v1/user/", headers=self.headers, data=json.dumps(user))
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, response.json["status"])
@@ -110,6 +106,28 @@ class UserServiceTest(unittest.TestCase):
 
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
+
+    def test_add_companies_to_user(self):
+        payload = {"name": "user", "rfc": "TEUS000101X00"}
+        self.headers["Authorization"] = self.auth
+        resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
+        user = resp.json["user"]
+        user["_id"] = validate_id(user["_id"])
+
+        resp = user_service.add_companies_to_user(user, "PGT190401156")
+
+        self.assertEqual(resp, True)
+
+    def test_delete_companies_of_user(self):
+        payload = {"name": "user", "rfc": "TEUS000101X00"}
+        self.headers["Authorization"] = self.auth
+        resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
+        user = resp.json["user"]
+        user["_id"] = validate_id(user["_id"])
+
+        resp = user_service.delete_companies_of_user(user, "PGT190401156")
+
+        self.assertEqual(resp, True)
 
 
 if __name__ == "__main__":

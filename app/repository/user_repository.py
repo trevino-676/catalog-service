@@ -48,7 +48,7 @@ class UserMongoRepository(Repository):
             if str(user._id) == "":
                 return None
             return user
-        except Exception as e:
+        except Exception:
             return None
 
     def get_users(self, filters: dict) -> list:
