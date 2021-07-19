@@ -4,7 +4,7 @@ description: Este archivo contiene las rutas de los microservicios
 """
 from flask import Blueprint, make_response, jsonify, request
 from flask_cors import cross_origin
-from flask_jwt import jwt_required
+from flask_jwt import jwt_required, current_identity
 from bson.json_util import dumps
 
 from app.service import user_service, upload_service
@@ -184,9 +184,7 @@ def get_url_file():
         obj_name = request.json["file_route"]
     else:
         resp = make_response(
-            dumps(
-                {"status": False, "message": "Los parametros enviados no son validos"}
-            ),
+            dumps({"status": False, "message": "Los parametros enviados no son validos"}),
             404,
         )
         resp.headers["Content-Type"] = "application/json"
@@ -253,6 +251,17 @@ def login_user():
             dumps({"status": False, "message": "Usuario o contrasena incorrectos"}), 404
         )
     return make_response(dumps({"status": True, "data": {"token": ""}}), 200)
+
+
+@user_routes.route("/logged_info", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def get_logged_info():
+    """
+    Returns the user info how is logged
+    """
+    user = current_identity
+    return make_response(dumps({"status": True, "user": user}), 200)
 
 
 @user_routes.after_request

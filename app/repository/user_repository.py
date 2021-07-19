@@ -43,8 +43,7 @@ class UserMongoRepository(Repository):
             User: Una instancia con el usuario encontrado.
         """
         try:
-            user = User()
-            user.find(filters)
+            user = User(User.find_all_user_info(filters)[0])
             if str(user._id) == "":
                 return None
             return user

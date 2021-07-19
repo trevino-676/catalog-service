@@ -71,6 +71,8 @@ class UserService(Service):
         Raise:
             Exception: Si hubo un error al guardar la informacion.
         """
+        if "companies_info" in user:
+            del user["companies_info"]
         if "companies" not in user:
             user["companies"] = [company_rfc]
         else:

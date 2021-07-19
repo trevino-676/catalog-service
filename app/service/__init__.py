@@ -4,7 +4,7 @@ from app.repository import urepository, s3_repository, company_repository
 from app.service.user_service import UserService
 from app.service.upload_files_service import UploadFilesService
 from app.service.company_service import CompanyService
-from app.utils import check_password
+from app.utils import check_password, validate_id
 
 user_service = UserService(urepository)
 upload_service = UploadFilesService(s3_repository)
@@ -15,6 +15,8 @@ def authenticate(email, password):
     filter = {"email": email}
     user = user_service.get_user(filter)
     user["id"] = str(user["_id"])
+    for company in user.companies_info:
+        company["_id"] = str(company["_id"])
     if user and check_password(password, user["password"]):
         return user
 

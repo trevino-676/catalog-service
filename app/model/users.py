@@ -7,7 +7,7 @@ from app.model import DTO
 
 
 class User(DTO):
-    
+
     collection_name = app.config["DB_NAME"]
     collection = mongo.db[collection_name]
 
@@ -23,7 +23,7 @@ class User(DTO):
             list: Todos los usuarios que se encontraron
         """
         return cls.__find_all(filters)
-    
+
     @classmethod
     def __find_all(cls, filters: dict) -> list:
         """__find_all
@@ -45,3 +45,24 @@ class User(DTO):
         except Exception as e:
             print(e)
             return None
+
+    @classmethod
+    def find_all_user_info(cls, filters: dict):
+        pipeline = [
+            {"$match": filters},
+            {
+                "$lookup": {
+                    "from": "companies",
+                    "localField": "companies",
+                    "foreignField": "rfc",
+                    "as": "companies_info",
+                }
+            },
+        ]
+        try:
+            user = cls.collection.aggregate(pipeline)
+            if not user:
+                raise Exception("No user found")
+            return list(user)
+        except Exception as e:
+            raise Exception(e)

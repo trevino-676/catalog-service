@@ -129,6 +129,13 @@ class UserServiceTest(unittest.TestCase):
 
         self.assertEqual(resp, True)
 
+    def test_get_user_info(self):
+        self.headers["Authorization"] = self.auth
+        resp = self.app.get("/v1/user/logged_info", headers=self.headers)
+
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(True, resp.json["status"])
+
 
 if __name__ == "__main__":
     unittest.main()
