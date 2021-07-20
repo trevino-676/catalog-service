@@ -24,3 +24,13 @@ class CompanyService(CService):
 
     def delete(self, id: str) -> str:
         return self.repository.delete(id)
+
+    def get_companies_by_user(self, user: dict) -> list:
+        """
+        Regresa las companias relacionadas con el usuario.
+        """
+        if "companies_info" in user:
+            return user["companies_info"]
+
+        filters = {"rfc": {"$in": user["companies"]}}
+        return self.repository.get_all(filters)

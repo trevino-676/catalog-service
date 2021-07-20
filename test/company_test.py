@@ -24,9 +24,7 @@ class CompanyServiceTest(unittest.TestCase):
 
     def __auth(self):
         payload = {"username": "user_test@test.com", "password": "test123"}
-        response = self.app.post(
-            "/auth", headers=self.headers, data=json.dumps(payload)
-        )
+        response = self.app.post("/auth", headers=self.headers, data=json.dumps(payload))
         return f"JWT {response.json['access_token']}"
 
     def test_create_company(self):
@@ -72,6 +70,11 @@ class CompanyServiceTest(unittest.TestCase):
         company = response_company.json["company"]
         id = company["_id"]["$oid"]
         response = self.app.delete(f"/v1/company/{id}", headers=self.headers)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(True, response.json["status"])
+
+    def test_get_companies_by_user(self):
+        response = self.app.get("/v1/company/by_user", headers=self.headers)
         self.assertEqual(200, response.status_code)
         self.assertEqual(True, response.json["status"])
 

@@ -8,11 +8,13 @@ from app import app
 from app.model import Company
 from app.repository import CompanyRepository
 
+
 class CompanyMongoRepository(CompanyRepository):
     """
     En esta clase se definen lod metodos del repositorio de compania
     para la base de datos de MongoDB
     """
+
     def save(self, document: dict) -> bool:
         """
         Guarda una compania en la base de datos
@@ -28,7 +30,7 @@ class CompanyMongoRepository(CompanyRepository):
         except Exception as e:
             app.logger.warning(e)
             return False
-    
+
     def get_one(self, filter: dict) -> Company:
         """
         Busca la compania que coincida con los filtros
@@ -47,7 +49,7 @@ class CompanyMongoRepository(CompanyRepository):
         except Exception as e:
             app.logger.error(e)
             return None
-    
+
     def get_all(self, filters: dict) -> list:
         """
         Busca todas las companias que coincidan con los filtros.
@@ -65,10 +67,10 @@ class CompanyMongoRepository(CompanyRepository):
         except Exception as e:
             app.logger.error(e)
             return None
-    
+
     def update(self, document: dict) -> bool:
         """
-        Actualiza la informacion de la compania que se pasa como 
+        Actualiza la informacion de la compania que se pasa como
             parametro.
 
         :params document (dict): compania con los datos ya modificados

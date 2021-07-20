@@ -197,6 +197,21 @@ def delete_company(id):
     return resp
 
 
+@company_routes.route("/by_user", methods=["GET"])
+@cross_origin()
+@jwt_required()
+def get_companies_by_user():
+    companies = company_service.get_companies_by_user(current_identity)
+    if not companies:
+        return make_response(
+            dumps(
+                {"status": False, "message": "No hay empresas asignadas a este usuario."}
+            ),
+            404,
+        )
+    return make_response(dumps({"status": True, "data": companies}), 200)
+
+
 @company_routes.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
