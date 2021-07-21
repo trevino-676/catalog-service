@@ -4,6 +4,7 @@ date: 18/05/2021
 """
 from app.repository import CompanyRepository
 from app.service.service import CService
+from app import app
 
 
 class CompanyService(CService):
@@ -34,3 +35,18 @@ class CompanyService(CService):
 
         filters = {"rfc": {"$in": user["companies"]}}
         return self.repository.get_all(filters)
+
+    def update_files_company(self, rfc: str, document_type: str, filename: str):
+        company = self.repository.get_one({"rfc": rfc})
+        company[f"{document_type}_file"] = f"{rfc}/{filename}"
+        company.save()
+
+    def set_fiel_password(self, filters, fiel_password):
+        try:
+            company = self.repository.get_one(filters)
+            company["fiel"] = fiel_password
+            company.save()
+            return True
+        except Exception as e:
+            app.logger.error(e)
+            return False

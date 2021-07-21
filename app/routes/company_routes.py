@@ -7,8 +7,9 @@ from flask_cors import cross_origin
 from bson.json_util import dumps
 from flask_jwt import jwt_required, current_identity
 
-from app.service import company_service, user_service
+from app.service import company_service, user_service, upload_service
 from app.utils import make_filters, FilterType, validate_id
+from app import app
 
 
 company_routes = Blueprint("company", __name__, url_prefix="/v1/company")
@@ -210,6 +211,42 @@ def get_companies_by_user():
             404,
         )
     return make_response(dumps({"status": True, "data": companies}), 200)
+
+
+@company_routes.route("/<rfc>/upload", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def upload_file(rfc):
+    file = request.files["file"]
+    file_type = "key" if file.filename.lower().endswith(".key") else "cer"
+
+    if upload_service.upload_file(file, app.config["BUCKET"], rfc=rfc):
+        resp = make_response(dumps({"status": True}), 200)
+        company_service.update_files_company(rfc, file_type, file.filename)
+    else:
+        resp = make_response(dumps({"status": False}), 500)
+
+    return resp
+
+
+@company_routes.route("/fiel", methods=["POST"])
+@cross_origin()
+@jwt_required()
+def set_fiel_password():
+    params = request.json
+    if "_id" not in params and "rfc" not in params:
+        resp = make_response(
+            dumps({"status": False, "message": "Parametros incorrectos"}), 404
+        )
+    filters = {"rfc": params["rfc"]}
+    if company_service.set_fiel_password(filters, params["fiel"]):
+        resp = make_response(dumps({"status": True, "message": "Fiel guardada"}), 200)
+    else:
+        resp = make_response(
+            dumps({"status": False, "message": "Problemas al guardar la contrasena"})
+        )
+
+    return resp
 
 
 @company_routes.after_request
