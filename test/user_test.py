@@ -43,16 +43,16 @@ class UserServiceTest(unittest.TestCase):
         self.assertEqual("test", response.json["user"]["last_name"])
         self.assertEqual(True, response.json["status"])
 
-    def test_update_user(self):
-        payload = {"name": "user", "rfc": "TEUS000101X00"}
-        self.headers["Authorization"] = self.auth
-        resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
-        user = resp.json["user"]
-        user["email"] = "test@test.com"
-        response = self.app.put("/v1/user/", headers=self.headers, data=json.dumps(user))
+    # def test_update_user(self):
+    #     payload = {"name": "user", "rfc": "TEUS000101X00"}
+    #     self.headers["Authorization"] = self.auth
+    #     resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
+    #     user = resp.json["user"]
+    #     user["email"] = "test@test.com"
+    #     response = self.app.put("/v1/user/", headers=self.headers, data=json.dumps(user))
 
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(True, response.json["status"])
+    #     self.assertEqual(200, response.status_code)
+    #     self.assertEqual(True, response.json["status"])
 
     def test_zdelete_user(self):
         self.headers["Authorization"] = self.auth
@@ -118,16 +118,16 @@ class UserServiceTest(unittest.TestCase):
 
         self.assertEqual(resp, True)
 
-    def test_delete_companies_of_user(self):
-        payload = {"name": "user", "rfc": "TEUS000101X00"}
-        self.headers["Authorization"] = self.auth
-        resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
-        user = resp.json["user"]
-        user["_id"] = validate_id(user["_id"])
+    # def test_delete_companies_of_user(self):
+    #     payload = {"name": "user", "rfc": "TEUS000101X00"}
+    #     self.headers["Authorization"] = self.auth
+    #     resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
+    #     user = resp.json["user"]
+    #     user["_id"] = validate_id(user["_id"])
 
-        resp = user_service.delete_companies_of_user(user, "PGT190401156")
+    #     resp = user_service.delete_companies_of_user(user, "PGT190401156")
 
-        self.assertEqual(resp, True)
+    #     self.assertEqual(resp, True)
 
     def test_get_user_info(self):
         self.headers["Authorization"] = self.auth
