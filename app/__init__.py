@@ -17,6 +17,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 mongo = PyMongo(app, authSource="admin")
 
 from app.service import authenticate, identity
+
 jwt = JWT(app, authenticate, identity)
 
 from app.routes import user_routes
@@ -26,3 +27,7 @@ app.register_blueprint(user_routes)
 from app.routes import company_routes
 
 app.register_blueprint(company_routes)
+
+from app.routes import supplier_routes
+
+app.register_blueprint(supplier_routes)

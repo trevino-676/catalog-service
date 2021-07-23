@@ -6,7 +6,6 @@ from app.repository import AWSRepository
 
 
 class UploadFilesService:
-
     def __init__(self, repository: AWSRepository):
         self.repo = repository
 
