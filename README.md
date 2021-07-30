@@ -6,8 +6,16 @@ Este microservicio contiene los distintos catalogos que se utilizan en la aplica
 - Usuarios
 - Empresas
 - Autenticacion
-- Provedores (falta)
+- Provedores
 
-
+## Instalar dependencias
+```bash
+pip install -r requirements.txt
+# Levantar servidor
+cp .env.example .env
+# Agregar las colecciones (catalogos)
+# al .env
+python main.py
+```
 
 [sonar32]: https://sonar32.com.mx

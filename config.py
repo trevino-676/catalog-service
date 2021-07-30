@@ -25,6 +25,7 @@ class Config:
     MONGO_URI = environ.get("MONGO_URI")
     DB_NAME = environ.get("DB_NAME")
     COMPANY_COLLECTION = environ.get("COMPANY_COLLECTION")
+    PROVEEDORES_COLLECTION = environ.get("PROVEEDORES_COLLECTION")
 
     # AWS variables
     AWS_KEY = environ.get("AWS_KEY")

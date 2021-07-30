@@ -4,7 +4,7 @@ description: Este archivo contiene la clase abstracta para el repository
 """
 from abc import ABC, abstractmethod
 
-from app.model import User, Company
+from app.model import User, Company, Suppliers
 
 
 class Repository(ABC):
@@ -48,4 +48,30 @@ class CompanyRepository(ABC):
 
     @abstractmethod
     def get_all(self, filter: dict) -> list:
+        pass
+
+
+class SupplierRepository(ABC):
+    # @abstractmethod
+    # def save(self, document: dict) -> bool:
+    #     pass
+
+    @abstractmethod
+    def get_one(self, filter: dict) -> Suppliers:
+        pass
+
+    # @abstractmethod
+    # def update(self, document: dict) -> bool:
+    #     pass
+
+    # @abstractmethod
+    # def delete(self, id: str) -> str:
+    #     pass
+
+    @abstractmethod
+    def get_all(self, filter: dict) -> list:
+        pass
+
+    @abstractmethod
+    def update_one(self, filter:dict, values:dict):
         pass

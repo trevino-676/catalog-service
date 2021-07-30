@@ -48,3 +48,23 @@ class CService(ABC):
     def delete(self, id: str) -> str:
         pass
     
+class SService(ABC):
+    # @abstractmethod
+    # def add_supp(self, supp: dict) -> bool:
+    #     pass
+
+    @abstractmethod
+    def get_supp(self, filters: dict):
+        pass
+
+    @abstractmethod
+    def get_supps(self, filters: dict) -> list:
+        pass
+
+    @abstractmethod
+    def update_one(self, filters: str, update: dict):
+        pass
+
+    # @abstractmethod
+    # def delete_supp(self, id: str) -> str:
+    #     pass
