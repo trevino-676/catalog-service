@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request, make_response
 from flask_cors import cross_origin
 from bson.json_util import dumps
@@ -26,6 +25,7 @@ def after_request(response):
     response.headers["Content-Type"] = "application/json"
     return response
 
+
 @supplier_routes.route("/", methods=["GET"])
 def find_supplier():
     """
@@ -34,7 +34,7 @@ def find_supplier():
     rfc = request.args["rfc"]
     print("req", rfc)
     try:
-        supplier = suppliers_service.get_supp({"_id":rfc})
+        supplier = suppliers_service.get_supp({"_id": rfc})
     except Exception as e:
         message = str(e)
         supplier = None
@@ -43,9 +43,7 @@ def find_supplier():
             dumps(
                 {
                     "status": False,
-                    "message": message
-                    if message
-                    else "No se encontro ningun proveedor",
+                    "message": message if message else "No se encontro ningun proveedor",
                 }
             ),
             404,
@@ -63,8 +61,8 @@ def find_all_suppliers():
     """
     parameters = request.args
     filters = {}
-    for k,v in parameters.items():
-        if v == "null" :
+    for k, v in parameters.items():
+        if v == "null":
             filters[k] = None
         else:
             filters[k] = v
@@ -85,6 +83,7 @@ def find_all_suppliers():
     resp.headers["Content-Type"] = "application/json"
     return resp
 
+
 @supplier_routes.route("/set", methods=["POST"])
 def update_one():
     """
@@ -96,16 +95,16 @@ def update_one():
     try:
         rfc = parameters["rfc"]
         parameters.pop("rfc")
-        for k,v in parameters.items():
-            if v == "null" :
+        for k, v in parameters.items():
+            if v == "null":
                 fields[k] = None
             else:
                 fields[k] = bool(v)
     except Exception as e:
         app.logger.error(e)
         fields = None
-    
-    if fields is None :
+
+    if fields is None:
         resp = make_response(
             dumps(
                 {
@@ -118,7 +117,7 @@ def update_one():
 
     res = suppliers_service.update_one(rfc, fields)
 
-    if res is None :
+    if res is None:
         resp = make_response(
             dumps(
                 {"status": False, "message": "No se encontro ningun recibo de supplier"}
