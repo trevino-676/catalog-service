@@ -27,6 +27,7 @@ def after_request(response):
 
 
 @supplier_routes.route("/", methods=["GET"])
+@cross_origin()
 def find_supplier():
     """
     Busca un solo proveedor que coincida con el RFC
@@ -55,6 +56,7 @@ def find_supplier():
 
 
 @supplier_routes.route("/all", methods=["GET"])
+@cross_origin()
 def find_all_suppliers():
     """find_all_suppliers
     Busca todos los documentos que coincidan con los filtros
@@ -85,6 +87,7 @@ def find_all_suppliers():
 
 
 @supplier_routes.route("/set", methods=["POST"])
+@cross_origin()
 def update_one():
     """
     Actualiza campos de un proveedor
