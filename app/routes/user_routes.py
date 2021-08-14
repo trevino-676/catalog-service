@@ -9,7 +9,6 @@ from bson.json_util import dumps
 
 from app.service import user_service, upload_service
 from app.utils import (
-    validate_user,
     FilterType,
     make_filters,
     validate_id,
@@ -60,17 +59,6 @@ def save_user():
     Guarda el usuario que reciba en el request
     """
     user = request.json
-    missing_fields = validate_user(user)
-    if len(missing_fields) > 0:
-        response = {
-            "status": False,
-            "message": f"Faltan los siguientes campos: "
-            f"{str(map(lambda field: field, missing_fields))}",
-        }
-        resp = make_response(jsonify(response), 404)
-        resp.headers["Content-Type"] = "application/json"
-        return resp
-
     user["password"] = encrypt_password(user["password"])
     if not user_service.add_user(user):
         response = {
