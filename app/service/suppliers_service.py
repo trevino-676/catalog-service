@@ -12,9 +12,12 @@ class SuppliersService(SService):
 
     def get_supp(self, filters: dict) -> dict:
         return self.repository.get_one(filters)
-        
+
     def get_supps(self, filters: dict) -> list:
         return self.repository.get_all(filters)
-    
+
     def update_one(self, filters: str, update: dict):
         return self.repository.update_one(filters, update)
+
+    def get_suppliers_by_company(self, rfc, filters):
+        return self.repository.get_suppliers_by_company(rfc, filters)

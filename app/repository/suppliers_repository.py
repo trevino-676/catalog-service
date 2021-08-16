@@ -2,11 +2,10 @@
 author: ErrataSEV
 date: 21/07/2021
 """
-from bson import ObjectId
-
 from app.model import Suppliers
 from app.repository import SupplierRepository
 from app import app
+
 
 class SuppliersMongoRepository(SupplierRepository):
     def get_one(self, filters: dict) -> dict:
@@ -39,7 +38,7 @@ class SuppliersMongoRepository(SupplierRepository):
         except Exception as e:
             app.logger.error(e)
             return None
-    
+
     def update_one(self, filters: str, field: dict):
         """
         Actualiza un documento en los campos establecidos
@@ -54,3 +53,10 @@ class SuppliersMongoRepository(SupplierRepository):
             app.logger.error(e)
             return None
 
+    def get_suppliers_by_company(self, rfc: str, filters: dict):
+        try:
+            suppliers = Suppliers.get_suppliers_by_company(rfc, filters)
+            return suppliers
+        except Exception as e:
+            app.logger.error(e)
+            return None

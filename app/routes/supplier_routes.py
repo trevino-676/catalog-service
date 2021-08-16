@@ -132,3 +132,22 @@ def update_one():
 
     resp.headers["Content-Type"] = "application/json"
     return resp
+
+
+@supplier_routes.route("/by_company", methods=["GET"])
+@cross_origin()
+def by_company():
+    params = dict(request.args)
+    rfc = params.get("datos.Rfc")
+    params.pop("datos.Rfc")
+    for key, value in params.items():
+        if value == "null":
+            params[key] = None
+        else:
+            params[key] = value
+
+    data = suppliers_service.get_suppliers_by_company(rfc, params)
+    if not data:
+        return make_response(dumps({"status": False}), 404)
+
+    return make_response(dumps({"status": True, "data": data}), 200)
