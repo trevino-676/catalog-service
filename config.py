@@ -26,6 +26,7 @@ class Config:
     DB_NAME = environ.get("DB_NAME")
     COMPANY_COLLECTION = environ.get("COMPANY_COLLECTION")
     PROVEEDORES_COLLECTION = environ.get("PROVEEDORES_COLLECTION")
+    CONFIG_COLLECTION = environ.get("CONFIG_COLLECTION")
 
     # AWS variables
     AWS_KEY = environ.get("AWS_KEY")
