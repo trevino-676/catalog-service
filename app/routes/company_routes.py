@@ -215,7 +215,7 @@ def get_companies_by_user():
 
 @company_routes.route("/<rfc>/upload", methods=["POST"])
 @cross_origin()
-@jwt_required()
+# @jwt_required()
 def upload_file(rfc):
     file = request.files["file"]
     file_type = "key" if file.filename.lower().endswith(".key") else "cer"

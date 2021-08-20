@@ -107,16 +107,16 @@ class UserServiceTest(unittest.TestCase):
         self.assertEqual(200, resp.status_code)
         self.assertEqual(True, resp.json["status"])
 
-    def test_add_companies_to_user(self):
-        payload = {"name": "user", "rfc": "TEUS000101X00"}
-        self.headers["Authorization"] = self.auth
-        resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
-        user = resp.json["user"]
-        user["_id"] = validate_id(user["_id"])
+    # def test_add_companies_to_user(self):
+    #     payload = {"name": "user", "rfc": "TEUS000101X00"}
+    #     self.headers["Authorization"] = self.auth
+    #     resp = self.app.get("/v1/user/", headers=self.headers, data=json.dumps(payload))
+    #     user = resp.json["user"]
+    #     user["_id"] = validate_id(user["_id"])
 
-        resp = user_service.add_companies_to_user(user, "PGT190401156")
+    #     resp = user_service.add_companies_to_user(user, "PGT190401156")
 
-        self.assertEqual(resp, True)
+    #     self.assertEqual(resp, True)
 
     # def test_delete_companies_of_user(self):
     #     payload = {"name": "user", "rfc": "TEUS000101X00"}

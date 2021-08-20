@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, request, make_response
 from flask_cors import cross_origin
 from bson.json_util import dumps
@@ -26,7 +25,9 @@ def after_request(response):
     response.headers["Content-Type"] = "application/json"
     return response
 
+
 @supplier_routes.route("/", methods=["GET"])
+@cross_origin()
 def find_supplier():
     """
     Busca un solo proveedor que coincida con el RFC
@@ -34,7 +35,7 @@ def find_supplier():
     rfc = request.args["rfc"]
     message = ""
     try:
-        supplier = suppliers_service.get_supp({"_id":rfc})
+        supplier = suppliers_service.get_supp({"_id": rfc})
     except Exception as e:
         message = str(e)
         supplier = None
@@ -43,9 +44,7 @@ def find_supplier():
             dumps(
                 {
                     "status": False,
-                    "message": message
-                    if message
-                    else "No se encontro ningun proveedor",
+                    "message": message if message else "No se encontro ningun proveedor",
                 }
             ),
             404,
@@ -57,14 +56,15 @@ def find_supplier():
 
 
 @supplier_routes.route("/all", methods=["GET"])
+@cross_origin()
 def find_all_suppliers():
     """find_all_suppliers
     Busca todos los documentos que coincidan con los filtros
     """
     parameters = request.args
     filters = {}
-    for k,v in parameters.items():
-        if v == "null" :
+    for k, v in parameters.items():
+        if v == "null":
             filters[k] = None
         else:
             filters[k] = v
@@ -85,7 +85,9 @@ def find_all_suppliers():
     resp.headers["Content-Type"] = "application/json"
     return resp
 
+
 @supplier_routes.route("/set", methods=["POST"])
+@cross_origin()
 def update_one():
     """
     Actualiza campos de un proveedor
@@ -96,16 +98,16 @@ def update_one():
     try:
         rfc = parameters["rfc"]
         parameters.pop("rfc")
-        for k,v in parameters.items():
-            if v == "null" :
+        for k, v in parameters.items():
+            if v == "null":
                 fields[k] = None
             else:
                 fields[k] = bool(v)
     except Exception as e:
         app.logger.error(e)
         fields = None
-    
-    if fields is None :
+
+    if fields is None:
         resp = make_response(
             dumps(
                 {
@@ -118,7 +120,7 @@ def update_one():
 
     res = suppliers_service.update_one(rfc, fields)
 
-    if res is None :
+    if res is None:
         resp = make_response(
             dumps(
                 {"status": False, "message": "No se encontro ningun recibo de supplier"}
@@ -130,3 +132,22 @@ def update_one():
 
     resp.headers["Content-Type"] = "application/json"
     return resp
+
+
+@supplier_routes.route("/by_company", methods=["GET"])
+@cross_origin()
+def by_company():
+    params = dict(request.args)
+    rfc = params.get("datos.Rfc")
+    params.pop("datos.Rfc")
+    for key, value in params.items():
+        if value == "null":
+            params[key] = None
+        else:
+            params[key] = value
+
+    data = suppliers_service.get_suppliers_by_company(rfc, params)
+    if not data:
+        return make_response(dumps({"status": False}), 404)
+
+    return make_response(dumps({"status": True, "data": data}), 200)

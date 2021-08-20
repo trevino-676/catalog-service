@@ -2,8 +2,6 @@
 author: Luis Manuel Torres Trevino
 description: Este archivo crea toda la aplicacion de flask
 """
-import os
-
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_cors import CORS
@@ -31,3 +29,7 @@ app.register_blueprint(company_routes)
 from app.routes import supplier_routes
 
 app.register_blueprint(supplier_routes)
+
+from app.routes import config_routes
+
+app.register_blueprint(config_routes)

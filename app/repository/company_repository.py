@@ -44,7 +44,6 @@ class CompanyMongoRepository(CompanyRepository):
             company.find(filter)
             if str(company._id) == "":
                 return None
-            company._id = str(company._id)
             return company
         except Exception as e:
             app.logger.error(e)
