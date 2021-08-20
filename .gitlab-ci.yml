@@ -15,7 +15,11 @@ python-test:
     - pip install --no-cache-dir -r requirements.txt
     - cat $CONFIGFILE > .env
   script:
-    - python -m unittest discover -s test -p '*_test.py'
+    - python -m pytest --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
 
 docker-build-test:
   image: docker:latest
