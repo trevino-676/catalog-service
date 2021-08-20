@@ -1,9 +1,8 @@
-from app.repository import CompanyRepository
-from app.service.service import CService
+from app.repository import ConfigRepository
 
 
-class ConfigService(CService):
-    def __init__(self, repository: CompanyRepository):
+class ConfigService:
+    def __init__(self, repository: ConfigRepository):
         self.repository = repository
 
     def add(self, document: dict):

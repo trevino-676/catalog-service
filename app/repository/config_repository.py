@@ -1,11 +1,10 @@
 from bson import ObjectId
 
-from app.repository import CompanyRepository
 from app.model import ConfigModel
 from app import app
 
 
-class ConfigRepository(CompanyRepository):
+class ConfigRepository:
     def save(self, document: dict):
         try:
             config = ConfigModel(document)
@@ -53,3 +52,7 @@ class ConfigRepository(CompanyRepository):
         except Exception as e:
             app.logger.error(e)
             return False
+
+    def get_all(self, filters):
+        print(filters)
+        return []
