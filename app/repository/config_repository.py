@@ -24,7 +24,7 @@ class ConfigRepository:
             return None
 
     def update(self, document: dict):
-        if "_id" in document:
+        if "_id" not in document:
             return False
 
         document["_id"] = (
