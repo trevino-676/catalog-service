@@ -7,6 +7,7 @@ from app.routes.user_routes import user_routes
 from app.routes.company_routes import company_routes
 from app.routes.supplier_routes import supplier_routes
 from app.routes.config_routes import config_routes
+from app.routes.payments_routes import payment_routes
 from app import app
 
 
