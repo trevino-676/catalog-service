@@ -19,7 +19,7 @@ def headers():
 
 def test_create_config(headers):
     test_app = app.test_client()
-    config = {"main_company": "TECO000101X00", "reports_period": "monthly"}
+    config = {"main_company": "TECO000101X00", "period": "monthly"}
     response = test_app.post("/v1/config/", data=json.dumps(config), headers=headers)
 
     assert response.status_code == 200
