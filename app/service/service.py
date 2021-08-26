@@ -68,3 +68,24 @@ class SService(ABC):
     # @abstractmethod
     # def delete_supp(self, id: str) -> str:
     #     pass
+
+class PayCompService(ABC):
+    # @abstractmethod
+    # def add_supp(self, supp: dict) -> bool:
+    #     pass
+
+    @abstractmethod
+    def get_pay(self, filters: dict):
+        pass
+
+    @abstractmethod
+    def get_pays(self, filters: dict) -> list:
+        pass
+
+    @abstractmethod
+    def find_agg(self, filters: list) -> list:
+        pass
+
+    # @abstractmethod
+    # def delete_supp(self, id: str) -> str:
+    #     pass

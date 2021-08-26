@@ -33,7 +33,7 @@ def find_supplier():
     Busca un solo proveedor que coincida con el RFC
     """
     rfc = request.args["rfc"]
-    print("req", rfc)
+    message = ""
     try:
         supplier = suppliers_service.get_supp({"_id": rfc})
     except Exception as e:
