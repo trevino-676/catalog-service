@@ -100,7 +100,11 @@ def update_one():
             if v == "null" :
                 fields[k] = None
             else:
-                fields[k] = bool(v)
+                if v == "true" or v == "false" :
+                    val = True if v == "true" else False
+                    fields[k] = val
+                else: 
+                    fields[k] = v
     except Exception as e:
         app.logger.error(e)
         fields = None
