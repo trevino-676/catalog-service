@@ -3,7 +3,6 @@ author: Luis Manuel Torres Trevino
 description: Este archivo contiene la clase base para todos los
     objetos dto del microservicio
 """
-from bson import ObjectId
 
 
 class DTO(dict):

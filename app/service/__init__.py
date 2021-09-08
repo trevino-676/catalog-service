@@ -1,16 +1,27 @@
 from bson import ObjectId
 
-from app.repository import urepository, s3_repository, company_repository, supp_repo
+from app.repository import (
+    urepository,
+    s3_repository,
+    company_repository,
+    supp_repo,
+    config_repo,
+    pay_repo
+)
 from app.service.user_service import UserService
 from app.service.upload_files_service import UploadFilesService
 from app.service.company_service import CompanyService
 from app.service.suppliers_service import SuppliersService
-from app.utils import check_password, validate_id
+from app.service.config_service import ConfigService
+from app.service.payments_service import PaymentService
+from app.utils import check_password
 
 user_service = UserService(urepository)
 upload_service = UploadFilesService(s3_repository)
 company_service = CompanyService(company_repository)
 suppliers_service = SuppliersService(supp_repo)
+config_service = ConfigService(config_repo)
+pay_service = PaymentService(pay_repo)
 
 
 def authenticate(email, password):
