@@ -47,7 +47,8 @@ class CService(ABC):
     @abstractmethod
     def delete(self, id: str) -> str:
         pass
-    
+
+
 class SService(ABC):
     # @abstractmethod
     # def add_supp(self, supp: dict) -> bool:
@@ -68,6 +69,7 @@ class SService(ABC):
     # @abstractmethod
     # def delete_supp(self, id: str) -> str:
     #     pass
+
 
 class PayCompService(ABC):
     # @abstractmethod

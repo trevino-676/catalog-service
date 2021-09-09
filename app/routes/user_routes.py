@@ -7,7 +7,7 @@ from flask_cors import cross_origin
 from flask_jwt import jwt_required, current_identity
 from bson.json_util import dumps
 
-from app.service import user_service, upload_service
+from app.service import user_service, upload_service, config_service
 from app.utils import (
     FilterType,
     make_filters,
@@ -67,8 +67,10 @@ def save_user():
         }
         resp = make_response(jsonify(response), 500)
     else:
-        response = {"status": True, "id": "Se guardo correctamente el usuario"}
-        resp = make_response(jsonify(response), 200)
+        new_user = user_service.get_user({"name": user["name"], "email": user["email"]})
+        if config_service.add({"user": str(new_user["_id"])}):
+            response = {"status": True, "id": "Se guardo correctamente el usuario"}
+            resp = make_response(jsonify(response), 200)
 
     resp.headers["Content-Type"] = "application/json"
     return resp
@@ -129,6 +131,8 @@ def delete_user():
     Elimina un usuario en la base de datos
     """
     user_id = validate_id(request.args.get("id"))
+    config = config_service.get_one({"user": str(user_id)})
+    config_service.delete(str(config["_id"]))
     if user_service.delete_user(user_id) != user_id:
         response = {
             "status": False,
