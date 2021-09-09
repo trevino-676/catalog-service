@@ -4,7 +4,7 @@ from flask import Blueprint, request, make_response
 from flask_jwt import jwt_required, current_identity
 from flask_cors import cross_origin
 
-from app.service import config_service
+from app.service import config_service, user_service
 
 
 config_routes = Blueprint("config", __name__, url_prefix="/v1/config")
@@ -51,6 +51,45 @@ def delete_config(id: str):
         return make_response(json.dumps({"status": False}), 500)
     return make_response(json.dumps({"status": True}), 200)
 
+
+@config_routes.route("/company-config", methods=["POST"])
+@cross_origin()
+def find_data_basics():
+    """
+    Busca todos los documentos que coincidan con los filtros
+    """
+
+    parameters = request.form.to_dict()
+    try:
+        cfdis = user_service.aggregate([
+            {"$match": {"companies":parameters["rfc"]}},
+            {"$addFields": {"usr_id": {"$toString": "$_id"}}},
+            {"$lookup": 
+                {
+                    "from": "config",
+                    "localField": "usr_id",
+                    "foreignField": "user",
+                    "as": "config_usr"
+                }    
+            },
+            {"$project": {"_id":0, "config_usr._id":0}}
+        ])
+        print(cfdis)
+    except Exception as e:
+        print(e)
+        cfdis = None
+    if cfdis is None or len(cfdis) == 0:
+        resp = make_response(
+            json.dumps(
+                {"status": True, "data": []}
+            ),
+            200,
+        )
+    else:
+        resp = make_response(json.dumps({"status": True, "data": cfdis[0]["config_usr"]}), 200)
+
+    resp.headers["Content-Type"] = "application/json"
+    return resp
 
 @config_routes.after_request
 def after_request(response):

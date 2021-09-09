@@ -66,3 +66,12 @@ class User(DTO):
             return list(user)
         except Exception as e:
             raise Exception(e)
+
+    @classmethod
+    def find_agg(cls, filter: list):
+        try:
+            cfdis = cls.collection.aggregate(filter)
+            return list(cfdis)
+        except Exception as e:
+            app.logger.error(e)
+            return None

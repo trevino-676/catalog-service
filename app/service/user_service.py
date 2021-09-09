@@ -116,3 +116,6 @@ class UserService(Service):
             return True
         except Exception as e:
             raise Exception(e)
+
+    def aggregate(self, filters: list):
+        return self.repository.find_agg(filters)

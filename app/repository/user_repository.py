@@ -101,3 +101,17 @@ class UserMongoRepository(Repository):
         except Exception as e:
             print(e)
             return ""
+
+    def find_agg(self, filters: list):
+        """
+        Realiza una busqueda con aggregate
+        :param filters: lista de 'Stages' del aggregate
+        :return: uknown
+        """
+        try:
+            config_model = User.find_agg(filters)
+            return config_model
+        except Exception as e:
+            print(e)
+            return None
+
