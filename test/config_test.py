@@ -8,7 +8,7 @@ from app import app
 
 @pytest.fixture
 def headers():
-    payload = {"username": "user_test@test.com", "password": "test123"}
+    payload = {"username": "test@sonar.com", "password": "test123"}
     headers = {"Content-Type": "application/json"}
     res = requests.post(
         "https://www.sonar32.com.mx/auth", data=json.dumps(payload), headers=headers

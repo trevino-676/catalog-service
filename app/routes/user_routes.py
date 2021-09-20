@@ -68,7 +68,7 @@ def save_user():
         resp = make_response(jsonify(response), 500)
     else:
         new_user = user_service.get_user({"name": user["name"], "email": user["email"]})
-        if config_service.add({"user": str(new_user["_id"])}):
+        if config_service.add({"user": str(new_user["_id"]), "wizzard": True}):
             response = {"status": True, "id": "Se guardo correctamente el usuario"}
             resp = make_response(jsonify(response), 200)
 
