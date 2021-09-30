@@ -11,6 +11,7 @@ from app.repository.company_repository import CompanyMongoRepository
 from app.repository.suppliers_repository import SuppliersMongoRepository
 from app.repository.config_repository import ConfigRepository
 from app.repository.payments_repository import PaymentsMongoRepository
+from app.repository.account_repository import AccountRepository
 
 urepository = UserMongoRepository()
 s3_repository = AWSRepository()
@@ -18,3 +19,4 @@ company_repository = CompanyMongoRepository()
 supp_repo = SuppliersMongoRepository()
 config_repo = ConfigRepository()
 pay_repo = PaymentsMongoRepository()
+account_repo = AccountRepository()
