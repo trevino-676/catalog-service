@@ -73,11 +73,11 @@ class SupplierRepository(ABC):
         pass
 
     @abstractmethod
-    def update_one(self, filter:dict, values:dict):
+    def update_one(self, filter: dict, values: dict):
         pass
 
-class PaymentRepository(ABC):
 
+class PaymentRepository(ABC):
     @abstractmethod
     def get_one(self, filter: dict) -> Payments:
         pass
@@ -87,5 +87,5 @@ class PaymentRepository(ABC):
         pass
 
     @abstractmethod
-    def find_agg(self, filter:dict) -> list:
+    def find_agg(self, filter: dict) -> list:
         pass

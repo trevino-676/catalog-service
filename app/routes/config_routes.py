@@ -61,35 +61,38 @@ def find_data_basics():
 
     parameters = request.form.to_dict()
     try:
-        cfdis = user_service.aggregate([
-            {"$match": {"companies":parameters["rfc"]}},
-            {"$addFields": {"usr_id": {"$toString": "$_id"}}},
-            {"$lookup": 
+        cfdis = user_service.aggregate(
+            [
+                {"$match": {"companies": parameters["rfc"]}},
+                {"$addFields": {"usr_id": {"$toString": "$_id"}}},
                 {
-                    "from": "config",
-                    "localField": "usr_id",
-                    "foreignField": "user",
-                    "as": "config_usr"
-                }    
-            },
-            {"$project": {"_id":0, "config_usr._id":0}}
-        ])
+                    "$lookup": {
+                        "from": "config",
+                        "localField": "usr_id",
+                        "foreignField": "user",
+                        "as": "config_usr",
+                    }
+                },
+                {"$project": {"_id": 0, "config_usr._id": 0}},
+            ]
+        )
         print(cfdis)
     except Exception as e:
         print(e)
         cfdis = None
     if cfdis is None or len(cfdis) == 0:
         resp = make_response(
-            json.dumps(
-                {"status": True, "data": []}
-            ),
+            json.dumps({"status": True, "data": []}),
             200,
         )
     else:
-        resp = make_response(json.dumps({"status": True, "data": cfdis[0]["config_usr"]}), 200)
+        resp = make_response(
+            json.dumps({"status": True, "data": cfdis[0]["config_usr"]}), 200
+        )
 
     resp.headers["Content-Type"] = "application/json"
     return resp
+
 
 @config_routes.after_request
 def after_request(response):

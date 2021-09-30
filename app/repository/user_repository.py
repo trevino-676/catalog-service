@@ -114,4 +114,3 @@ class UserMongoRepository(Repository):
         except Exception as e:
             print(e)
             return None
-

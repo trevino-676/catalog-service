@@ -7,11 +7,13 @@ from app import app
 
 payment_routes = Blueprint("payment", __name__, url_prefix="/v1/payment")
 
+
 @payment_routes.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Content-Type"] = "application/json"
     return response
+
 
 @payment_routes.route("/", methods=["GET"])
 @cross_origin()
@@ -31,7 +33,9 @@ def find_payment():
             dumps(
                 {
                     "status": False,
-                    "message": message if message else "No se encontro ningun complemento",
+                    "message": message
+                    if message
+                    else "No se encontro ningun complemento",
                 }
             ),
             404,
@@ -89,28 +93,27 @@ def find_data_basics():
         else:
             filters[k] = v
     try:
-        cfdis = pay_service.find_agg([
-            {"$match": {
-                filters["fieldMatch"]: filters["user"],
-                "datos.Fecha": {
-                    "$gte": filters["dateBegin"],
-                    "$lte": filters["dateEnd"]
-                }
-            }},
-            {"$group": {
-                "_id": "$"+filters["fieldGroup"],
-                "count": {"$sum": 1}
-            }}
-        ])
+        cfdis = pay_service.find_agg(
+            [
+                {
+                    "$match": {
+                        filters["fieldMatch"]: filters["user"],
+                        "datos.Fecha": {
+                            "$gte": filters["dateBegin"],
+                            "$lte": filters["dateEnd"],
+                        },
+                    }
+                },
+                {"$group": {"_id": "$" + filters["fieldGroup"], "count": {"$sum": 1}}},
+            ]
+        )
     except Exception as e:
         print(e)
         message = str(e)
         cfdi = None
     if cfdis is None or len(cfdis) == 0:
         resp = make_response(
-            dumps(
-                {"status": True, "data": []}
-            ),
+            dumps({"status": True, "data": []}),
             200,
         )
     else:
@@ -118,6 +121,7 @@ def find_data_basics():
 
     resp.headers["Content-Type"] = "application/json"
     return resp
+
 
 @payment_routes.route("/get-count", methods=["POST"])
 @cross_origin()
@@ -127,38 +131,44 @@ def data_count():
     """
 
     parameters = request.form.to_dict()
-    if (not "totalCol" in parameters) :
+    if not "totalCol" in parameters:
         parameters["totalCol"] = "datos.Total"
-    if (not "subTotalCol" in parameters) :
+    if not "subTotalCol" in parameters:
         parameters["subTotalCol"] = "datos.SubTotal"
     try:
-        cfdis = pay_service.find_agg([
-            {"$match": {
-                parameters["fieldMatch"]: parameters["user"],
-                "datos.Fecha": {
-                    "$gte": parameters["dateBegin"],
-                    "$lte": parameters["dateEnd"]
+        cfdis = pay_service.find_agg(
+            [
+                {
+                    "$match": {
+                        parameters["fieldMatch"]: parameters["user"],
+                        "datos.Fecha": {
+                            "$gte": parameters["dateBegin"],
+                            "$lte": parameters["dateEnd"],
+                        },
+                        "datos.Cancelado": None,
+                    }
                 },
-                "datos.Cancelado": None
-            }},
-            {"$project":{
-                parameters["fieldMatch"]:1,
-                "count": {"$sum":1},
-                "total": {"$sum": "$"+parameters["totalCol"] },
-                "subTotal": {"$sum": "$"+parameters["subTotalCol"]},
-            }},
-            {"$group":{
-                "_id":"$"+parameters["fieldMatch"],
-                "count": {"$sum": "$count"},
-                "total": {"$sum": "$total"},
-                "subTotal": {"$sum": "$subTotal"}
-            }}
-        ])
+                {
+                    "$project": {
+                        parameters["fieldMatch"]: 1,
+                        "count": {"$sum": 1},
+                        "total": {"$sum": "$" + parameters["totalCol"]},
+                        "subTotal": {"$sum": "$" + parameters["subTotalCol"]},
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": "$" + parameters["fieldMatch"],
+                        "count": {"$sum": "$count"},
+                        "total": {"$sum": "$total"},
+                        "subTotal": {"$sum": "$subTotal"},
+                    }
+                },
+            ]
+        )
         if cfdis is None or len(cfdis) == 0:
             resp = make_response(
-                dumps(
-                    {"status": True, "data": []}
-                ),
+                dumps({"status": True, "data": []}),
                 200,
             )
         resp = make_response(dumps({"status": True, "data": cfdis}), 200)
@@ -173,4 +183,3 @@ def data_count():
 
     resp.headers["Content-Type"] = "application/json"
     return resp
-

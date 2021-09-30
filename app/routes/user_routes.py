@@ -176,7 +176,9 @@ def get_url_file():
         obj_name = request.json["file_route"]
     else:
         resp = make_response(
-            dumps({"status": False, "message": "Los parametros enviados no son validos"}),
+            dumps(
+                {"status": False, "message": "Los parametros enviados no son validos"}
+            ),
             404,
         )
         resp.headers["Content-Type"] = "application/json"

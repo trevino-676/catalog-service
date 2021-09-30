@@ -76,7 +76,9 @@ class UserService(Service):
         if "companies" not in user:
             user["companies"] = [company_rfc]
         else:
-            rfc_exists = list(filter(lambda rfc: (rfc == company_rfc), user["companies"]))
+            rfc_exists = list(
+                filter(lambda rfc: (rfc == company_rfc), user["companies"])
+            )
             if not rfc_exists:
                 user["companies"].append(company_rfc)
 

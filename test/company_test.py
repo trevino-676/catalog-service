@@ -24,7 +24,9 @@ class CompanyServiceTest(unittest.TestCase):
 
     def __auth(self):
         payload = {"username": "user_test@test.com", "password": "test123"}
-        response = self.app.post("/auth", headers=self.headers, data=json.dumps(payload))
+        response = self.app.post(
+            "/auth", headers=self.headers, data=json.dumps(payload)
+        )
         return f"JWT {response.json['access_token']}"
 
     def test_create_company(self):

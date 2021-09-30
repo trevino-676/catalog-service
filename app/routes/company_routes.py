@@ -43,7 +43,10 @@ def create_company():
     if not user_service.add_companies_to_user(current_identity, company["rfc"]):
         resp = make_response(
             dumps(
-                {"status": False, "message": "Error al guardar la compania en el usuario"}
+                {
+                    "status": False,
+                    "message": "Error al guardar la compania en el usuario",
+                }
             ),
             500,
         )
@@ -206,7 +209,10 @@ def get_companies_by_user():
     if not companies:
         return make_response(
             dumps(
-                {"status": False, "message": "No hay empresas asignadas a este usuario."}
+                {
+                    "status": False,
+                    "message": "No hay empresas asignadas a este usuario.",
+                }
             ),
             404,
         )

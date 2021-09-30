@@ -25,10 +25,12 @@ class AWSRepository:
 
         object_name = f"{rfc}/{file.filename}"
         try:
-            response = self.s3_client.upload_fileobj(file, bucket, object_name,
-                                                     ExtraArgs={"ACL": "public-read",
-                                                                "ContentType":
-                                                                    file.content_type})
+            response = self.s3_client.upload_fileobj(
+                file,
+                bucket,
+                object_name,
+                ExtraArgs={"ACL": "public-read", "ContentType": file.content_type},
+            )
         except ClientError as e:
             print(e)
             return False
@@ -45,8 +47,9 @@ class AWSRepository:
         """
         params = {"Bucket": bucket, "Key": object_name}
         try:
-            response = self.s3_client.generate_presigned_url("get_object", Params=params,
-                                                             ExpiresIn=expiration)
+            response = self.s3_client.generate_presigned_url(
+                "get_object", Params=params, ExpiresIn=expiration
+            )
         except ClientError as e:
             print(e)
             return None

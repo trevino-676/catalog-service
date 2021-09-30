@@ -44,7 +44,9 @@ def find_supplier():
             dumps(
                 {
                     "status": False,
-                    "message": message if message else "No se encontro ningun proveedor",
+                    "message": message
+                    if message
+                    else "No se encontro ningun proveedor",
                 }
             ),
             404,
@@ -102,10 +104,10 @@ def update_one():
             if v == "null":
                 fields[k] = None
             else:
-                if v == "true" or v == "false" :
+                if v == "true" or v == "false":
                     val = True if v == "true" else False
                     fields[k] = val
-                else: 
+                else:
                     fields[k] = v
     except Exception as e:
         app.logger.error(e)

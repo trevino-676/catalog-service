@@ -1,5 +1,10 @@
 from app.model.payments_model import Payments
-from app.repository.repository import Repository, CompanyRepository, SupplierRepository, PaymentRepository
+from app.repository.repository import (
+    Repository,
+    CompanyRepository,
+    SupplierRepository,
+    PaymentRepository,
+)
 from app.repository.user_repository import UserMongoRepository
 from app.repository.aws_repository import AWSRepository
 from app.repository.company_repository import CompanyMongoRepository

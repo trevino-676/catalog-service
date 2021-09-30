@@ -6,7 +6,7 @@ from app.repository import (
     company_repository,
     supp_repo,
     config_repo,
-    pay_repo
+    pay_repo,
 )
 from app.service.user_service import UserService
 from app.service.upload_files_service import UploadFilesService

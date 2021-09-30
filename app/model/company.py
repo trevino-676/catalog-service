@@ -30,4 +30,3 @@ class Company(DTO):
         except Exception as e:
             app.logger.error(e.message)
             return None
-
