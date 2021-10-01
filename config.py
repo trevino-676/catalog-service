@@ -3,6 +3,7 @@ author: Luis Manuel Torres Trevino
 descripcion: Este archivo contiene la configuracion para la aplicacion
     del microservicios de usuarios
 """
+from datetime import timedelta
 from os import path, environ
 
 from dotenv import load_dotenv
@@ -35,3 +36,4 @@ class Config:
     BUCKET = "drumbot-robinhood"
 
     # JWT environ variables
+    JWT_EXPIRATION_DELTA = timedelta(seconds=900) 
