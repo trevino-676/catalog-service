@@ -37,3 +37,7 @@ app.register_blueprint(config_routes)
 from app.routes import payment_routes
 
 app.register_blueprint(payment_routes)
+
+from app.routes import account_routes
+
+app.register_blueprint(account_routes)
