@@ -31,6 +31,8 @@ class AccountRepository:
 
     def update(self, document: dict) -> bool:
         if "_id" in document:
+            if "$oid" in document["_id"]:
+                document["_id"] = ObjectId(document["_id"]["$oid"]) 
             if type(document["_id"]) is str:
                 document["_id"] = ObjectId(document["_id"])
 

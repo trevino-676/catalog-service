@@ -76,7 +76,7 @@ def update_account():
 @account_routes.route("/", methods=["DELETE"])
 @cross_origin()
 @jwt_required()
-def delete_account(id):
+def delete_account():
     id = str(request.args.get("id"))
     if not account_service.delete(id):
         return make_response(

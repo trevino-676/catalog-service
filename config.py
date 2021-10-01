@@ -28,7 +28,7 @@ class Config:
     PROVEEDORES_COLLECTION = environ.get("PROVEEDORES_COLLECTION")
     PAYMENTS_COMP_COLLECTION = environ.get("PAYMENTS_COMP_COLLECTION")
     CONFIG_COLLECTION = environ.get("CONFIG_COLLECTION")
-
+    ACCOUNT_COLLECTION = environ.get("ACCOUNT_COLLECTION")
     # AWS variables
     AWS_KEY = environ.get("AWS_KEY")
     AWS_SECRET_KEY = environ.get("AWS_SECRET_KEY")
